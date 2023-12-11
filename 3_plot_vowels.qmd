@@ -1,0 +1,22 @@
+```{r}
+#| label: imports
+#| message: false
+
+library(tidyverse)    # <1>
+library(magrittr)     # <2>
+library(ggtext)       # <3>
+library(ggforce)      # <4>
+library(ggrepel)      # <5>
+library(rcartocolor)  # <6>
+library(png)          # <7>
+library(patchwork)    # <8>
+```
+
+1.  Data wrangling (`tidyr`, `dplyr`, `purrr`, `stringr`), `ggplot2` for plotting
+2.  Pipe operator
+3.  Markdown/HTML formatting for text in plots
+4.  Ellipsis plots
+5.  Offset text labels from points
+6.  Color themes
+7.  Open PNG images
+8.  Add image to plot

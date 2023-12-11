@@ -1,0 +1,18 @@
+```{python}
+#| label: imports
+
+"""Part 2 of Lingthusiasm Vowel Plots: Trimming Audio and Getting Vowel Formants."""
+
+import glob  # <1>
+import os  # <1>
+import pandas as pd  # <2>
+from pytube import Playlist, YouTube  # <3>
+from pydub import AudioSegment  # <4>
+import parselmouth  # <5>
+```
+
+1. File utilities.
+2. Dataframes.
+3. Getting captions and audio data from YouTube.
+4. Working with audio files.
+5. Interface with Praat.

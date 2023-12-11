@@ -1,0 +1,19 @@
+```{python}
+#| label: imports
+
+"""Part 1 of Lingthusiasm Vowel Plots: Finding Vowels to Annotate."""
+
+import re  # <1>
+import pandas as pd  # <2>
+import requests  # <3>
+from bs4 import BeautifulSoup  # <3>
+from thefuzz import process  # <4>
+from pytube import Playlist, YouTube  # <5>
+```
+
+1. Regex functions
+2. Dataframe functions
+3. Scraping data from webpages
+4. Fuzzy string matching
+5. Getting captions and audio from YouTube
+
