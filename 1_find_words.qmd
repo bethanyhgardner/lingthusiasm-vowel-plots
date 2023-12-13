@@ -411,3 +411,152 @@ transcripts_subset \
 1. Count the number of items in each combination of `Vowel`, `Word`, and `Speaker`. Convert those results to a dataframe and call the column of counts `Tokens`. Change `Vowel`, `Word`, and `Speaker` from indices to columns. Print the results as a table, not including row numbers.
 
 Gretchen and Lauren each say all of the words more than once, and most of the words have 5+ tokens to pick from.
+
+### Get Timestamps
+
+The transcripts on the Lingthusiasm website have all the speakers labelled, but no timestamps, and the captions on YouTube have timestamps, but few speaker labels. To find where in the episodes the token words are, we'll have to combine them.
+
+We're going to be getting the caption data and audio from Lingthusiasm's "all episodes" [playlist](https://www.youtube.com/watch?v=xHNgepsuZ8c&list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG), using the [pytube package](https://pytube.io/en/latest/).
+
+```{python}
+#| label: video-list
+
+video_list = Playlist('https://www.youtube.com/watch?v=xHNgepsuZ8c&' +
+                      'list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG')
+```
+
+This function uses the YouTube playlist link to download captions for each video:
+
+```{python}
+#| label: function-get-captions
+
+def get_captions(videos):
+    """Get and format captions from YouTube URLs."""
+    df = pd.DataFrame()  # <1>
+
+    for url in videos:  # <2>
+        video = YouTube(url)  # <2>
+        video.bypass_age_gate()  # <3>
+
+        title = video.title  # <4>
+        number = int(title[:2])  # <4>
+
+        caps = caption_version(video.captions)  # <5>
+        try:
+            caps = parse_captions(caps.xml_captions)  # <6>
+        except AttributeError:
+            caps = pd.DataFrame()
+
+        caps.insert(0, 'Episode', number)  # <7>
+        df = pd.concat([df, caps])  # <8>
+
+    df = df[['Episode', 'Text', 'Start', 'End']]  # <9>
+    df[['Start', 'End']] = df[['Start', 'End']].astype('float32')  # <9>
+
+    return df.sort_values(['Episode', 'Start'])  # <9>
+```
+
+1. Start dataframe for results.
+2. Go through the list of video URLs and open each one as a `YouTube` object.
+3. Need to include this to access captions.
+4. The video title is an attribute of the `YouTube` object, and the episode number is the first word of the title.
+5. Load captions, which returns a dictionary with the language name as the key and the captions and the values. Select which English version to use (function defined below).
+6. Convert XML data to dataframe (function defined below). If this doesn't work, make an empty placeholder dataframe.
+7. Add `Episode` column (integer).
+8. Add results from current video to dataframe of all results.
+9. Return dataframe of all captions, after organizing columns and sorting rows by episode number then time.
+
+Now, some helper functions to select which caption version to download and then reformat the data from XML to a dataframe.
+
+Caption data is most commonly formatted as XML or SRT, which is a text format, but not easily convertible to a dataframe.
+
+```{python}
+#| label: function-caption-utils
+
+def caption_version(cur_captions):    # <1>
+    """Select which version of the captions to use (formatting varies)."""
+
+    if 'en' in cur_captions.keys():
+        return cur_captions['en']
+    elif 'en-GB' in cur_captions.keys():
+        return cur_captions['en-GB']
+    elif 'a.en' in cur_captions.keys():
+        return cur_captions['a.en']
+
+
+def caption_times(xml):
+    """Find timestamps in XML data."""
+
+    lines = pd.Series(xml.split('<p')[1:], dtype='string')  # <2>
+    df = lines.str.extract(r'(?P<Start>t="[0-9]*")')  # <3>
+    df['Start'] = df['Start'].str.removeprefix('t="').str.removesuffix('"')  # <4>
+    df['Start'] = df['Start'].astype('int')  # <4>
+
+    return df
+
+
+def caption_text(xml):
+    """Find text and filter out extra tags in XML data."""
+
+    lines = pd.Series(xml.split('<p')[1:], dtype='string')  # <5>
+    tags = r'"[0-9]*"|t=|d=|w=|a=|ac=|</p>|</s>|<s\s|>\s|>|</body|</timedtext'  # <6>
+    texts = lines.str.replace(tags, '', regex=True)  # <7>
+    texts = texts.str.replace('&#39;', '\'') \
+        .str.replace('&quot;', "'") \
+        .str.replace('&lt;', '[') \
+        .str.replace('&gt;', ']') \
+        .str.replace('&amp;', ' and ')  # <8>
+    texts = [clean_text(line) for line in texts.to_list()]  # <8>
+
+    return pd.DataFrame({'Text': texts}, dtype='string')  # <9>
+
+
+def parse_captions(xml):
+    """Combine timestamp rows and text rows."""
+
+    times = caption_times(xml)  # <10>
+    texts = caption_text(xml)  # <10>
+    df = times.join(texts)  # <10>
+    df = df[df['Text'].str.contains(r'[a-z]')]  # <11>
+    df = df.reset_index(drop=True)  # <11>
+    df['End'] = df['Start'].shift(-1) - 1  # <12>
+
+    return df
+```
+
+1. Prefer `en` captions, and if those aren't available, try `en-GB` then `a.en`. The main difference is in the formatting, and I think if they are user- or auto-generated.
+2. The XML data is one giant string. Split into a list using the `<p` tag, which results in one string per caption item (timestamps, text, and various other tags).
+3. Each caption item has a start time preceded by `t=`. This regex gets `t="[numbers]"` and puts each result into a column called `Start`.
+4. Remove `t="` from the beginning of the `Start` column and `"` from the end, leaving a number that can be converted from a string to an integer.
+5. The XML data is one giant string. Split into a list using the `<p` tag, which results in one string per caption item (timestamps, text, and various other tags).
+6. This is a list of the other variables that come with the caption text, including `t=` for start time and `d=` for duration. The formatting varies somewhat based on which version of captions you get, and the reason this selects the `en` captions before the `en-GB` and `a.en` captions is that this formatting is simpler.
+7. Take all the tags/variables out, leaving only the actual caption text.
+8. Remove special characters and extra spaces.
+9. Return as dataframe, with `Text` specified as a string column. If you leave it as the default object type, pandas will throw warnings later.
+10. Get dataframes with caption times and caption texts, using two functions just defined. Join the results into one dataframe (this works because both are indexed by row number).
+11. Remove rows where caption text is blank, then reset index (row number).
+12. Make a column for the `End` time, which is the `Start` time of the new row - 1.
+
+Running this takes a minute or so.
+
+```{python}
+#| label: get-captions
+
+captions = get_captions(video_list)  # <1>
+
+captions = captions[captions['Episode'] <= 84]  # <2>
+
+pd.concat([captions.head(), captions.tail()]).style.format(precision=0)  # <3>
+```
+
+1. Load and format captions for each video in the "all episodes" playlist, using functions defined above.
+2. Only analyze episodes 1-84.
+3. Show the first and last 10 rows of the resulting dataframe. `.style` prints it as a nicer-looking table.
+
+Save results to `data/captions.csv`:
+
+```{python}
+#| label: save-captions
+
+captions.to_csv('data/captions.csv', index=False)
+```
