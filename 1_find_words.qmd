@@ -250,4 +250,164 @@ Save results to `data/transcripts.csv`:
 transcripts.to_csv('data/transcripts.csv', index=True)
 ```
 
+### Find Words For Each Vowel
 
+#### Which Words To Use?
+
+These words aren't all as controlled as you'd probably want for an experiment, but they're high frequency enough that there are multiple tokens for each one in the episodes.
+
+```{python}
+#| label: word-list
+
+word_list = {  # <1>
+    '\u0069': {   # i  # <2>
+        'beat': r'\bbeat\b',  # <3>
+        'believe': r'\bbelieve\b',
+        'people': r'\bpeople\b'},
+    '\u026A': {  # ɪ
+        'bit': r'\bbit\b',
+        'finish': r'\bfinish', # <4>
+        'pin': r'\bpin\b'},
+    '\u025B': {  # ɛ
+        'bet': r'\bbet\b',
+        'guest': r'\bguest',  # <5>
+        'says': r'\bsays\b'},
+    '\u00E6': {  # æ
+        'bang': r'\bbang\b',
+        'hand': r'\bhand\b',
+        'laugh': r'\blaugh\b'},
+    '\u0075': {  # u
+        'blue': r'\bblue\b',
+        'through': r'\bthrough\b',
+        'who': r'\bwho\b'},
+    '\u028A': {  # ʊ
+        'could': r'\bcould\b',
+        'foot': r'\bfoot\b',
+        'put': r'\bput\b'},
+    '\u0254': {  # ɔ
+        'bought': r'\bbought\b',
+        'core': r'\bcore\b',
+        'wrong': r'\bwrong\b'},
+    '\u0251': {  # ɑ
+        'ball': r'ball\b|\bballs\b',
+        'father': r'\bfather\b',
+        'honorific': r'\bhonorific'},  # <6>
+    '\u028C': {  # ʌ
+        'another': r'\banother\b',
+        'but': r'\bbut\b',
+        'fun': r'\bfun\b'},
+    '\u0259': {  # ə
+        'among': r'\bamong\b',
+        'famous': r'\bfamous\b',
+        'support': r'\bsupport\b'}
+}
+```
+
+1. Set up a nested dictionary, where the outer keys are the IPA vowels, the inner keys are the words, and the values are the regex strings for the words.
+2. `\u` makes it a unicode string.
+3. `\b` means search at word boundaries, and only a few words here also include suffixes (e.g., only return results for `bit`, but return results for `finish`, `finishes`, and `finishing`).
+4.  Also get `finishes`/`finishing`.
+5.  Also get `guests`.
+6.  Also get `honorifics`. Using `honorific` instead of `honor` because there's an episode about honorifics.
+
+#### Find Words In Transcript
+
+This function goes through the transcript dataframe and finds turns by `Gretchen` or `Lauren` containing the target words:
+
+```{python}
+#| label: function-filter-words
+
+def filter_for_words(words, df_all):
+    """Find turns by Gretchen/Lauren that contain the target words."""
+
+    df_gl = df_all[  # <1>
+        (df_all['Speaker'] == "Gretchen") |
+        (df_all['Speaker'] == "Lauren")
+    ]
+
+    df_words = pd.DataFrame()  # <2>
+    for vowel, examples in words.items():  # <3>
+        for word, reg in examples.items():  # <4>
+            has_word = df_gl[  # <5>
+                df_gl['Text'].str.contains(pat=reg, flags=re.IGNORECASE)
+            ]
+            has_word.insert(0, 'Vowel', vowel)  # <6>
+            has_word.insert(1, 'Word', word)  # <6>
+            has_word.set_index(['Word', 'Vowel'], inplace=True, append=True)  # <6>
+            has_word.index = has_word.index.reorder_levels(  # <6>
+                ['Vowel', 'Word', 'Episode', 'Turn'])
+
+            df_words = pd.concat([df_words, has_word])  # <7>
+
+    return df_words.sort_index()  # <8>
+```
+
+1. Filter to only include rows where `Speaker` is `Gretchen` or `Lauren`, not guests.
+2. Create dataframe to store results.
+3. Loop through outer layer of dictionary, where keys are vowels and values are lists of example words.
+4. Loop through inner dictionaries, where keys are the words and values are the regexes.
+5. Filter to only include rows where `Text` column matches word regex. `re.IGNORECASE` means the search is not case-sensitive.
+6. Make columns for the current `Vowel` and  `Word`, then add them to the index. The results dataframe is now indexed by unique combinations of `Vowel`, `Word`, `Episode`, and `Turn`.
+7. Add results for current word to dataframe of all results.
+8. Sorting the dataframe indices makes search faster later, and pandas will throw warnings if you search this large-ish dataframe before sorting.
+
+Next, this function trims the conversation turn around the target word, so it can be matched to the caption timestamps later: 
+
+```{python}
+#| label: function-trim-turns
+
+def trim_turn(df):
+    """Find location of target word in conversation turn and subset -/+ 25 characters around it."""
+
+    df['Text_Subset'] = pd.Series(dtype='string')  # <1>
+
+    for vowel, word, episode, turn in df.index:  # <2>
+        text_full = df.loc[vowel, word, episode, turn]['Text']  # <3>
+        word_loc = re.search(re.compile(word, re.IGNORECASE), text_full)  # <4>
+        word_loc = word_loc.span()[0]  # <4>
+        sub_start = max(word_loc - 25, 0)  # <5>
+        sub_end = min(word_loc + 25, len(text_full))  # <6>
+        text_sub = text_full[sub_start:sub_end]  # <7>
+        df.loc[(vowel, word, episode, turn), 'Text_Subset'] = str(text_sub)  # <7>
+
+    return df
+```
+
+1. Make a new column for the subset text, so it can be specified as a string. If you insert values later without initializing the column as a string, pandas will throw warnings.
+2. Go through each row of the dataframe with all the transcript turns by Gretchen or Lauren that contain target words.
+3. Use index values to get the value of `Text`.
+4. Search for the current row's `Word` in the current row's `Text` (again case-insensitive). This returns a search object, and the first item in that tuple is the location of the first letter of `Word` in `Text`.
+5. Start index of `Text_Subset` is 25 characters before the start of the `Word`, or the beginning of the string, whichever is larger.
+6. End index of `Text_Subset` is 25 characters after the start of the `Word`, or the end of the string, whichever is smaller.
+7. Insert `Text_Subset` into dataframe.
+
+Subset the transcripts dataframe to only include turns by Gretchen/Lauren that contain a target word:
+
+```{python}
+#| label: filter-transcript
+
+transcripts_subset = filter_for_words(word_list, transcripts)  # <1>
+transcripts_subset = trim_turn(transcripts_subset)  # <1>
+
+pd.concat([transcripts_subset.head(), transcripts_subset.tail()]).style  # <2>
+```
+
+1. Run the two functions just defined on the dataframe of all the transcripts, to filter to only include turns by Gretchen or Lauren that contain the target words, then trim the text of each turn around the target word.
+2. Show the first and last 10 rows of the resulting dataframe. `.style` prints it as a nicer-looking table.
+
+Here's how many tokens we have for each speaker and word:
+
+```{python}
+#| label: word-counts
+
+transcripts_subset \
+    .value_counts(['Vowel', 'Word', 'Speaker'], sort=False) \
+    .to_frame('Tokens') \
+    .reset_index(drop=False) \
+    .style \
+    .hide()  # <1>
+```
+
+1. Count the number of items in each combination of `Vowel`, `Word`, and `Speaker`. Convert those results to a dataframe and call the column of counts `Tokens`. Change `Vowel`, `Word`, and `Speaker` from indices to columns. Print the results as a table, not including row numbers.
+
+Gretchen and Lauren each say all of the words more than once, and most of the words have 5+ tokens to pick from.

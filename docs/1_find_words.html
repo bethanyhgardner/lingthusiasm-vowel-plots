@@ -3409,6 +3409,11 @@ vertical-align: -.125em;
   <li><a href="#list-episodes" id="toc-list-episodes" class="nav-link" data-scroll-target="#list-episodes"><span class="header-section-number">1.2.1</span> List Episodes</a></li>
   <li><a href="#scrape-transcript-text" id="toc-scrape-transcript-text" class="nav-link" data-scroll-target="#scrape-transcript-text"><span class="header-section-number">1.2.2</span> Scrape Transcript Text</a></li>
   </ul></li>
+  <li><a href="#find-words-for-each-vowel" id="toc-find-words-for-each-vowel" class="nav-link" data-scroll-target="#find-words-for-each-vowel"><span class="header-section-number">1.3</span> Find Words For Each Vowel</a>
+  <ul>
+  <li><a href="#which-words-to-use" id="toc-which-words-to-use" class="nav-link" data-scroll-target="#which-words-to-use"><span class="header-section-number">1.3.1</span> Which Words To Use?</a></li>
+  <li><a href="#find-words-in-transcript" id="toc-find-words-in-transcript" class="nav-link" data-scroll-target="#find-words-in-transcript"><span class="header-section-number">1.3.2</span> Find Words In Transcript</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/blob/main/docs/1_find_words.qmd" class="toc-action">View source</a></p></div></div></nav>
     </div>
@@ -3466,23 +3471,23 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-1" data-code-annotation="1" data-code-lines="3">Regex functions.</span>
+<span data-code-cell="annotated-cell-1" data-code-lines="3" data-code-annotation="1">Regex functions.</span>
 </dd>
 <dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-1" data-code-annotation="2" data-code-lines="4">Dataframe functions.</span>
+<span data-code-cell="annotated-cell-1" data-code-lines="4" data-code-annotation="2">Dataframe functions.</span>
 </dd>
 <dt data-target-cell="annotated-cell-1" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-1" data-code-annotation="3" data-code-lines="5,6">Scraping data from webpages.</span>
+<span data-code-cell="annotated-cell-1" data-code-lines="5,6" data-code-annotation="3">Scraping data from webpages.</span>
 </dd>
 <dt data-target-cell="annotated-cell-1" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-1" data-code-annotation="4" data-code-lines="7">Fuzzy string matching.</span>
+<span data-code-cell="annotated-cell-1" data-code-lines="7" data-code-annotation="4">Fuzzy string matching.</span>
 </dd>
 <dt data-target-cell="annotated-cell-1" data-target-annotation="5">5</dt>
 <dd>
-<span data-code-cell="annotated-cell-1" data-code-annotation="5" data-code-lines="8">Getting captions and audio from YouTube.</span>
+<span data-code-cell="annotated-cell-1" data-code-lines="8" data-code-annotation="5">Getting captions and audio from YouTube.</span>
 </dd>
 </dl>
 </div>
@@ -3507,15 +3512,15 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-2" data-code-annotation="1" data-code-lines="4">Connect to webpage.</span>
+<span data-code-cell="annotated-cell-2" data-code-lines="4" data-code-annotation="1">Connect to webpage.</span>
 </dd>
 <dt data-target-cell="annotated-cell-2" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-2" data-code-annotation="2" data-code-lines="5">Load the HTML data from the webpage.</span>
+<span data-code-cell="annotated-cell-2" data-code-lines="5" data-code-annotation="2">Load the HTML data from the webpage.</span>
 </dd>
 <dt data-target-cell="annotated-cell-2" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-2" data-code-annotation="3" data-code-lines="7">Return the HTML data object and the text from the HTML data object.</span>
+<span data-code-cell="annotated-cell-2" data-code-lines="7" data-code-annotation="3">Return the HTML data object and the text from the HTML data object.</span>
 </dd>
 </dl>
 </div>
@@ -3537,31 +3542,31 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="1" data-code-lines="4">Get HTML data from webpage using function defined above.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="4" data-code-annotation="1">Get HTML data from webpage using function defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="2" data-code-lines="5">Filter using the <code>a</code> tag to get all of the link items.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="5" data-code-annotation="2">Filter using the <code>a</code> tag to get all of the link items.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="3" data-code-lines="6">Get the <code>href</code> item from each <code>a</code> tag item, which is the text of the URL.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="6" data-code-annotation="3">Get the <code>href</code> item from each <code>a</code> tag item, which is the text of the URL.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="4" data-code-lines="7">Convert from list to pandas series.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="7" data-code-annotation="4">Convert from list to pandas series.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="5">5</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="5" data-code-lines="8">Filter to only include URLs including the word <code>transcript</code>.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="8" data-code-annotation="5">Filter to only include URLs including the word <code>transcript</code>.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="6">6</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="6" data-code-lines="9">Sort to have earliest episodes first.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="9" data-code-annotation="6">Sort to have earliest episodes first.</span>
 </dd>
 <dt data-target-cell="annotated-cell-3" data-target-annotation="7">7</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-annotation="7" data-code-lines="11">Return with index (row numbers) reset.</span>
+<span data-code-cell="annotated-cell-3" data-code-lines="11" data-code-annotation="7">Return with index (row numbers) reset.</span>
 </dd>
 </dl>
 </div>
@@ -3575,45 +3580,45 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-annotation="1" data-code-lines="1">Get the URLs for the episode transcripts from the table of contents page, using the functions defined above.</span>
+<span data-code-cell="annotated-cell-4" data-code-lines="1" data-code-annotation="1">Get the URLs for the episode transcripts from the table of contents page, using the functions defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-annotation="2" data-code-lines="3">Take the first 10 rows of the resulting list and print it as a nice table.</span>
+<span data-code-cell="annotated-cell-4" data-code-lines="3" data-code-annotation="2">Take the first 10 rows of the resulting list and print it as a nice table.</span>
 </dd>
 </dl>
 </div>
-<div id="get-links" class="cell-output cell-output-display" data-execution_count="28">
+<div id="get-links" class="cell-output cell-output-display" data-execution_count="21">
 <style type="text/css">
 </style>
 
-<table id="T_2db6a" data-quarto-postprocess="true" class="table table-sm table-striped small">
+<table id="T_9906a" data-quarto-postprocess="true" class="table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th"> </th>
-<th id="T_2db6a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">URL</th>
+<th id="T_9906a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">URL</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_2db6a_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
-<td id="T_2db6a_row0_col0" class="data row0 col0">https://lingthusiasm.com/post/155357756341/transcript-lingthusiasm-episode-1-speaking-a</td>
+<td id="T_9906a_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_9906a_row0_col0" class="data row0 col0">https://lingthusiasm.com/post/155357756341/transcript-lingthusiasm-episode-1-speaking-a</td>
 </tr>
 <tr class="even">
-<td id="T_2db6a_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
-<td id="T_2db6a_row1_col0" class="data row1 col0">https://lingthusiasm.com/post/156181768226/transcript-lingthusiasm-episode-2-pronouns</td>
+<td id="T_9906a_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_9906a_row1_col0" class="data row1 col0">https://lingthusiasm.com/post/156181768226/transcript-lingthusiasm-episode-2-pronouns</td>
 </tr>
 <tr class="odd">
-<td id="T_2db6a_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
-<td id="T_2db6a_row2_col0" class="data row2 col0">https://lingthusiasm.com/post/157167562811/transcript-lingthusiasm-episode-3-arrival-of-the</td>
+<td id="T_9906a_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_9906a_row2_col0" class="data row2 col0">https://lingthusiasm.com/post/157167562811/transcript-lingthusiasm-episode-3-arrival-of-the</td>
 </tr>
 <tr class="even">
-<td id="T_2db6a_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
-<td id="T_2db6a_row3_col0" class="data row3 col0">https://lingthusiasm.com/post/157268108811/transcript-lingthusiasm-episode-4-inside-the-word</td>
+<td id="T_9906a_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_9906a_row3_col0" class="data row3 col0">https://lingthusiasm.com/post/157268108811/transcript-lingthusiasm-episode-4-inside-the-word</td>
 </tr>
 <tr class="odd">
-<td id="T_2db6a_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
-<td id="T_2db6a_row4_col0" class="data row4 col0">https://lingthusiasm.com/post/158014366301/transcript-lingthusiasm-episode-5-colour-words</td>
+<td id="T_9906a_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</td>
+<td id="T_9906a_row4_col0" class="data row4 col0">https://lingthusiasm.com/post/158014366301/transcript-lingthusiasm-episode-5-colour-words</td>
 </tr>
 </tbody>
 </table>
@@ -3643,24 +3648,24 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-6" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-annotation="1" data-code-lines="4">Find location of <code>episode-</code>, since episode number is immediately following it.</span>
+<span data-code-cell="annotated-cell-6" data-code-lines="4" data-code-annotation="1">Find location of <code>episode-</code>, since episode number is immediately following it.</span>
 </dd>
 <dt data-target-cell="annotated-cell-6" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-annotation="2" data-code-lines="5">Subset URL starting 8 characters after start of <code>episode-</code> string, which is immediately after it.</span>
+<span data-code-cell="annotated-cell-6" data-code-lines="5" data-code-annotation="2">Subset URL starting 8 characters after start of <code>episode-</code> string, which is immediately after it.</span>
 </dd>
 <dt data-target-cell="annotated-cell-6" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-annotation="3" data-code-lines="6">Most of the transcript URLs have more text after the number. If so, trim to just keep the number.</span>
+<span data-code-cell="annotated-cell-6" data-code-lines="6" data-code-annotation="3">Most of the transcript URLs have more text after the number. If so, trim to just keep the number.</span>
 </dd>
 <dt data-target-cell="annotated-cell-6" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-6" data-code-annotation="4" data-code-lines="10">Return episode number converted from string to integer.</span>
+<span data-code-cell="annotated-cell-6" data-code-lines="10" data-code-annotation="4">Return episode number converted from string to integer.</span>
 </dd>
 </dl>
 </div>
 </div>
-<p>The text returned from the transcript pages has information at the top and bottom that we don’t need. <code>This is a transcript for</code> marks the start of the transcript, and <code>This work is licensed under</code> marks the end. This function subsets the transcript dataframe rows to only include that section:</p>
+<p>The text returned from the transcript pages has information at the top and bottom that we don’t need. <code>&quot;This is a transcript for&quot;</code> marks the start of the transcript, and <code>&quot;This work is licensed under&quot;</code> marks the end, so subset the transcript dataframe rows to only include that section:</p>
 <div id="function-trim-transcript" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trim_transcript(df):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Find start and end of transcript text.&quot;&quot;&quot;</span></span>
@@ -3684,19 +3689,19 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-8" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-8" data-code-annotation="1" data-code-lines="4">Remove leading and trailing whitespaces.</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="4" data-code-annotation="1">Remove leading and trailing whitespaces.</span>
 </dd>
 <dt data-target-cell="annotated-cell-8" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-8" data-code-annotation="2" data-code-lines="5">Replace non-breaking spaces, en dashes, and ellipses.</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="5" data-code-annotation="2">Replace non-breaking spaces, en dashes, and ellipses.</span>
 </dd>
 <dt data-target-cell="annotated-cell-8" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-8" data-code-annotation="3" data-code-lines="6">Replace slanted quotes.</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="6" data-code-annotation="3">Replace slanted quotes.</span>
 </dd>
 <dt data-target-cell="annotated-cell-8" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-8" data-code-annotation="4" data-code-lines="8">Remove double spaces between words.</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="8" data-code-annotation="4">Remove double spaces between words.</span>
 </dd>
 </dl>
 </div>
@@ -3713,7 +3718,7 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-9" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-9" data-code-annotation="1" data-code-lines="6">Regex looks like <code>(Name1:)|(Name2:)</code> etc. Surrounding names in parentheses makes it a capture group, so the names are included in the list of split items instead of dropped.</span>
+<span data-code-cell="annotated-cell-9" data-code-lines="6" data-code-annotation="1">Regex looks like <code>(Name1:)|(Name2:)</code> etc. Surrounding names in parentheses makes it a capture group, so the names are included in the list of split items instead of dropped.</span>
 </dd>
 </dl>
 </div>
@@ -3751,55 +3756,55 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-10" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="1" data-code-lines="4">Make list to store results.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="4" data-code-annotation="1">Make list to store results.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="2" data-code-lines="6">Read text string (vs HTML object) from URL, using function defined above.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="6" data-code-annotation="2">Read text string (vs HTML object) from URL, using function defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="3" data-code-lines="7">Trim to only include transcript section, using function defined above.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="7" data-code-annotation="3">Trim to only include transcript section, using function defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="4" data-code-lines="8">Split string into list with one item for each speaker turn, using regex defined above.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="8" data-code-annotation="4">Split string into list with one item for each speaker turn, using regex defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="5">5</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="5" data-code-lines="9">Drop items in list that are <code>None</code> (which are included because of capture group syntax).</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="9" data-code-annotation="5">Drop items in list that are <code>None</code> (which are included because of capture group syntax).</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="6">6</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="6" data-code-lines="10">Drop the initial “This is a transcript for…” line.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="10" data-code-annotation="6">Drop the initial “This is a transcript for…” line.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="7">7</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="7" data-code-lines="11,12">Now all the odd items are speaker labels and even items are turn text. <code>[::2]</code> is every 2nd item starting at 0, and <code>[1::2]</code> is every 2nd item starting at 1.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="11,12" data-code-annotation="7">Now all the odd items are speaker labels and even items are turn text. <code>[::2]</code> is every 2nd item starting at 0, and <code>[1::2]</code> is every 2nd item starting at 1.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="8">8</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="8" data-code-lines="13,18">Clean up strings and put everything into a dataframe.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="13,18" data-code-annotation="8">Clean up strings and put everything into a dataframe.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="9">9</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="9" data-code-lines="19">Make column for turn number, which is index + 1.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="19" data-code-annotation="9">Make column for turn number, which is index + 1.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="10">10</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="10" data-code-lines="20">Set <code>Episode</code> and <code>Turn</code> columns as indices.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="20" data-code-annotation="10">Set <code>Episode</code> and <code>Turn</code> columns as indices.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="11">11</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="11" data-code-lines="21">Add to list of parsed episodes.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="21" data-code-annotation="11">Add to list of parsed episodes.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="12">12</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="12" data-code-lines="23">Combine list of dataframes into one dataframe. This works because the <code>Episode</code> + <code>Turn</code> index combination is unique.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="23" data-code-annotation="12">Combine list of dataframes into one dataframe. This works because the <code>Episode</code> + <code>Turn</code> index combination is unique.</span>
 </dd>
 <dt data-target-cell="annotated-cell-10" data-target-annotation="13">13</dt>
 <dd>
-<span data-code-cell="annotated-cell-10" data-code-annotation="13" data-code-lines="24">Set datatypes explicitly, to avoid warnings later.</span>
+<span data-code-cell="annotated-cell-10" data-code-lines="24" data-code-annotation="13">Set datatypes explicitly, to avoid warnings later.</span>
 </dd>
 </dl>
 </div>
@@ -3813,25 +3818,25 @@ vertical-align: -.125em;
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-11" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-11" data-code-annotation="1" data-code-lines="1">Run <code>get_transcripts()</code> on the lists of links to each transcript, defined above.</span>
+<span data-code-cell="annotated-cell-11" data-code-lines="1" data-code-annotation="1">Run <code>get_transcripts()</code> on the lists of links to each transcript, defined above.</span>
 </dd>
 <dt data-target-cell="annotated-cell-11" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-11" data-code-annotation="2" data-code-lines="3">Show the first and last 10 rows of the resulting dataframe. <code>.style</code> prints it as a nicer-looking table.</span>
+<span data-code-cell="annotated-cell-11" data-code-lines="3" data-code-annotation="2">Show the first and last 10 rows of the resulting dataframe. <code>.style</code> prints it as a nicer-looking table.</span>
 </dd>
 </dl>
 </div>
-<div id="get-transcript-text" class="cell-output cell-output-display" data-execution_count="35">
+<div id="get-transcript-text" class="cell-output cell-output-display" data-execution_count="28">
 <style type="text/css">
 </style>
 
-<table id="T_aa1ab" data-quarto-postprocess="true" class="table table-sm table-striped small">
+<table id="T_77888" data-quarto-postprocess="true" class="table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th class="blank" data-quarto-table-cell-role="th"> </th>
 <th class="blank level0" data-quarto-table-cell-role="th"> </th>
-<th id="T_aa1ab_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Speaker</th>
-<th id="T_aa1ab_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Text</th>
+<th id="T_77888_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Speaker</th>
+<th id="T_77888_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Text</th>
 </tr>
 <tr class="odd">
 <th class="index_name level0" data-quarto-table-cell-role="th">Episode</th>
@@ -3842,56 +3847,56 @@ vertical-align: -.125em;
 </thead>
 <tbody>
 <tr class="odd">
-<td rowspan="5" id="T_aa1ab_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">1</td>
-<td id="T_aa1ab_level1_row0" class="row_heading level1 row0" data-quarto-table-cell-role="th">1</td>
-<td id="T_aa1ab_row0_col0" class="data row0 col0">Lauren</td>
-<td id="T_aa1ab_row0_col1" class="data row0 col1">Welcome to Lingthusiasm! A podcast that&#39;s enthusiastic about linguistics. I&#39;m Lauren Gawne.</td>
+<td rowspan="5" id="T_77888_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">1</td>
+<td id="T_77888_level1_row0" class="row_heading level1 row0" data-quarto-table-cell-role="th">1</td>
+<td id="T_77888_row0_col0" class="data row0 col0">Lauren</td>
+<td id="T_77888_row0_col1" class="data row0 col1">Welcome to Lingthusiasm! A podcast that&#39;s enthusiastic about linguistics. I&#39;m Lauren Gawne.</td>
 </tr>
 <tr class="even">
-<td id="T_aa1ab_level1_row1" class="row_heading level1 row1" data-quarto-table-cell-role="th">2</td>
-<td id="T_aa1ab_row1_col0" class="data row1 col0">Gretchen</td>
-<td id="T_aa1ab_row1_col1" class="data row1 col1">And I&#39;m Gretchen McCulloch. And today we&#39;re going to be talking about universal language and why it doesn&#39;t work. But first a little bit about what Lingthusiasm is.</td>
+<td id="T_77888_level1_row1" class="row_heading level1 row1" data-quarto-table-cell-role="th">2</td>
+<td id="T_77888_row1_col0" class="data row1 col0">Gretchen</td>
+<td id="T_77888_row1_col1" class="data row1 col1">And I&#39;m Gretchen McCulloch. And today we&#39;re going to be talking about universal language and why it doesn&#39;t work. But first a little bit about what Lingthusiasm is.</td>
 </tr>
 <tr class="odd">
-<td id="T_aa1ab_level1_row2" class="row_heading level1 row2" data-quarto-table-cell-role="th">3</td>
-<td id="T_aa1ab_row2_col0" class="data row2 col0">Lauren</td>
-<td id="T_aa1ab_row2_col1" class="data row2 col1">So I guess the important thing is to unpack &#39;a podcast that&#39;s enthusiastic about linguistics&#39;.</td>
+<td id="T_77888_level1_row2" class="row_heading level1 row2" data-quarto-table-cell-role="th">3</td>
+<td id="T_77888_row2_col0" class="data row2 col0">Lauren</td>
+<td id="T_77888_row2_col1" class="data row2 col1">So I guess the important thing is to unpack &#39;a podcast that&#39;s enthusiastic about linguistics&#39;.</td>
 </tr>
 <tr class="even">
-<td id="T_aa1ab_level1_row3" class="row_heading level1 row3" data-quarto-table-cell-role="th">4</td>
-<td id="T_aa1ab_row3_col0" class="data row3 col0">Gretchen</td>
-<td id="T_aa1ab_row3_col1" class="data row3 col1">Yeah! We chose our tagline because we&#39;re here to explore interesting things that language has to offer and especially what looking at language from a linguistics perspective can tell us about how language works.</td>
+<td id="T_77888_level1_row3" class="row_heading level1 row3" data-quarto-table-cell-role="th">4</td>
+<td id="T_77888_row3_col0" class="data row3 col0">Gretchen</td>
+<td id="T_77888_row3_col1" class="data row3 col1">Yeah! We chose our tagline because we&#39;re here to explore interesting things that language has to offer and especially what looking at language from a linguistics perspective can tell us about how language works.</td>
 </tr>
 <tr class="odd">
-<td id="T_aa1ab_level1_row4" class="row_heading level1 row4" data-quarto-table-cell-role="th">5</td>
-<td id="T_aa1ab_row4_col0" class="data row4 col0">Lauren</td>
-<td id="T_aa1ab_row4_col1" class="data row4 col1">Both of us have blogs where we do a fair amount of that, but that&#39;s a fairly solitary enterprise and we wanted to take the opportunity to have more of a conversation -- something that&#39;s a little less disembodied</td>
+<td id="T_77888_level1_row4" class="row_heading level1 row4" data-quarto-table-cell-role="th">5</td>
+<td id="T_77888_row4_col0" class="data row4 col0">Lauren</td>
+<td id="T_77888_row4_col1" class="data row4 col1">Both of us have blogs where we do a fair amount of that, but that&#39;s a fairly solitary enterprise and we wanted to take the opportunity to have more of a conversation -- something that&#39;s a little less disembodied</td>
 </tr>
 <tr class="even">
-<td rowspan="5" id="T_aa1ab_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">84</td>
-<td id="T_aa1ab_level1_row5" class="row_heading level1 row5" data-quarto-table-cell-role="th">184</td>
-<td id="T_aa1ab_row5_col0" class="data row5 col0">Lauren</td>
-<td id="T_aa1ab_row5_col1" class="data row5 col1">Ah, well, that&#39;s okay, because now we&#39;re at the end of this episode, I&#39;m pointing to everyone. [Music]</td>
+<td rowspan="5" id="T_77888_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">84</td>
+<td id="T_77888_level1_row5" class="row_heading level1 row5" data-quarto-table-cell-role="th">184</td>
+<td id="T_77888_row5_col0" class="data row5 col0">Lauren</td>
+<td id="T_77888_row5_col1" class="data row5 col1">Ah, well, that&#39;s okay, because now we&#39;re at the end of this episode, I&#39;m pointing to everyone. [Music]</td>
 </tr>
 <tr class="odd">
-<td id="T_aa1ab_level1_row6" class="row_heading level1 row6" data-quarto-table-cell-role="th">185</td>
-<td id="T_aa1ab_row6_col0" class="data row6 col0">Lauren</td>
-<td id="T_aa1ab_row6_col1" class="data row6 col1">For more Lingthusiasm and links to all the things pointed to in this episode, go to lingthusiasm.com. You can listen to us on Apple Podcasts, Google Podcasts, Spotify, SoundCloud, YouTube, or wherever else you get your podcasts. You can follow @lingthusiasm on Twitter, Facebook, Instagram, and Tumblr. You can get &#39;Etymology isn&#39;t Destiny&#39; on t-shirts and tote bags and lots of other items, and aesthetic IPA posters, and other Lingthusiasm merch at lingthusiasm.com/merch. I tweet and blog as Superlinguo.</td>
+<td id="T_77888_level1_row6" class="row_heading level1 row6" data-quarto-table-cell-role="th">185</td>
+<td id="T_77888_row6_col0" class="data row6 col0">Lauren</td>
+<td id="T_77888_row6_col1" class="data row6 col1">For more Lingthusiasm and links to all the things pointed to in this episode, go to lingthusiasm.com. You can listen to us on Apple Podcasts, Google Podcasts, Spotify, SoundCloud, YouTube, or wherever else you get your podcasts. You can follow @lingthusiasm on Twitter, Facebook, Instagram, and Tumblr. You can get &#39;Etymology isn&#39;t Destiny&#39; on t-shirts and tote bags and lots of other items, and aesthetic IPA posters, and other Lingthusiasm merch at lingthusiasm.com/merch. I tweet and blog as Superlinguo.</td>
 </tr>
 <tr class="even">
-<td id="T_aa1ab_level1_row7" class="row_heading level1 row7" data-quarto-table-cell-role="th">186</td>
-<td id="T_aa1ab_row7_col0" class="data row7 col0">Gretchen</td>
-<td id="T_aa1ab_row7_col1" class="data row7 col1">I can be found as @GretchenAMcC on Twitter, my blog is AllThingsLinguistic.com, and my book about internet language is called Because Internet. Lingthusiasm is able to keep existing thanks to the support of our patrons. If you wanna get an extra Lingthusiasm episode to listen to every month, our entire archive of bonus episodes to listen to right now, or if you just wanna help keep the show running ad-free, go to patreon.com/lingthusiasm or follow the links from our website. Patrons can also get access to our Discord chatroom to talk with other linguistics fans and be the first to find out about new merch and other announcements. Recent bonus topics include interviews with Sarah Dopierala and Martha Tsutsui-Billins about their own linguistic research and their work on Lingthusiasm and a very special Lingthusiasmr episode where we read The Harvard Sentences to you [ASMR voice] in a calm, soothing voice. [Regular voice] Can&#39;t afford to pledge? That&#39;s okay, too. We also really appreciate it if you can recommend Lingthusiasm to anyone in your life who&#39;s curious about language.</td>
+<td id="T_77888_level1_row7" class="row_heading level1 row7" data-quarto-table-cell-role="th">186</td>
+<td id="T_77888_row7_col0" class="data row7 col0">Gretchen</td>
+<td id="T_77888_row7_col1" class="data row7 col1">I can be found as @GretchenAMcC on Twitter, my blog is AllThingsLinguistic.com, and my book about internet language is called Because Internet. Lingthusiasm is able to keep existing thanks to the support of our patrons. If you wanna get an extra Lingthusiasm episode to listen to every month, our entire archive of bonus episodes to listen to right now, or if you just wanna help keep the show running ad-free, go to patreon.com/lingthusiasm or follow the links from our website. Patrons can also get access to our Discord chatroom to talk with other linguistics fans and be the first to find out about new merch and other announcements. Recent bonus topics include interviews with Sarah Dopierala and Martha Tsutsui-Billins about their own linguistic research and their work on Lingthusiasm and a very special Lingthusiasmr episode where we read The Harvard Sentences to you [ASMR voice] in a calm, soothing voice. [Regular voice] Can&#39;t afford to pledge? That&#39;s okay, too. We also really appreciate it if you can recommend Lingthusiasm to anyone in your life who&#39;s curious about language.</td>
 </tr>
 <tr class="odd">
-<td id="T_aa1ab_level1_row8" class="row_heading level1 row8" data-quarto-table-cell-role="th">187</td>
-<td id="T_aa1ab_row8_col0" class="data row8 col0">Lauren</td>
-<td id="T_aa1ab_row8_col1" class="data row8 col1">Lingthusiasm is created and produced by Gretchen McCulloch and Lauren Gawne. Our Senior Producer is Claire Gawne, our Editorial Producer is Sarah Dopierala, our Production Assistant is Martha Tsutsui-Billins, and our Editorial Assistant is Jon Kruk. Our music is &#39;Ancient City&#39; by The Triangles.</td>
+<td id="T_77888_level1_row8" class="row_heading level1 row8" data-quarto-table-cell-role="th">187</td>
+<td id="T_77888_row8_col0" class="data row8 col0">Lauren</td>
+<td id="T_77888_row8_col1" class="data row8 col1">Lingthusiasm is created and produced by Gretchen McCulloch and Lauren Gawne. Our Senior Producer is Claire Gawne, our Editorial Producer is Sarah Dopierala, our Production Assistant is Martha Tsutsui-Billins, and our Editorial Assistant is Jon Kruk. Our music is &#39;Ancient City&#39; by The Triangles.</td>
 </tr>
 <tr class="even">
-<td id="T_aa1ab_level1_row9" class="row_heading level1 row9" data-quarto-table-cell-role="th">188</td>
-<td id="T_aa1ab_row9_col0" class="data row9 col0">Gretchen</td>
-<td id="T_aa1ab_row9_col1" class="data row9 col1">Stay lingthusiastic! [Music]</td>
+<td id="T_77888_level1_row9" class="row_heading level1 row9" data-quarto-table-cell-role="th">188</td>
+<td id="T_77888_row9_col0" class="data row9 col0">Gretchen</td>
+<td id="T_77888_row9_col1" class="data row9 col1">Stay lingthusiastic! [Music]</td>
 </tr>
 </tbody>
 </table>
@@ -3901,6 +3906,714 @@ vertical-align: -.125em;
 <div id="save-transcripts" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>transcripts.to_csv(<span class="st">&#39;data/transcripts.csv&#39;</span>, index<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+</section>
+<section id="find-words-for-each-vowel" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="find-words-for-each-vowel"><span class="header-section-number">1.3</span> Find Words For Each Vowel</h3>
+<section id="which-words-to-use" class="level4" data-number="1.3.1">
+<h4 data-number="1.3.1" class="anchored" data-anchor-id="which-words-to-use"><span class="header-section-number">1.3.1</span> Which Words To Use?</h4>
+<p>These words aren’t all as controlled as you’d probably want for an experiment, but they’re high frequency enough that there are multiple tokens for each one in the episodes.</p>
+<div id="word-list" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="annotated-cell-13"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="1">1</button><span id="annotated-cell-13-1" class="code-annotation-target"><a href="#annotated-cell-13-1" aria-hidden="true" tabindex="-1"></a>word_list <span class="op">=</span> {</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="2">2</button><span id="annotated-cell-13-2" class="code-annotation-target"><a href="#annotated-cell-13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u0069</span><span class="st">&#39;</span>: {   <span class="co"># i</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="3">3</button><span id="annotated-cell-13-3" class="code-annotation-target"><a href="#annotated-cell-13-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;beat&#39;</span>: <span class="vs">r&#39;\bbeat\b&#39;</span>,</span>
+<span id="annotated-cell-13-4"><a href="#annotated-cell-13-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;believe&#39;</span>: <span class="vs">r&#39;\bbelieve\b&#39;</span>,</span>
+<span id="annotated-cell-13-5"><a href="#annotated-cell-13-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;people&#39;</span>: <span class="vs">r&#39;\bpeople\b&#39;</span>},</span>
+<span id="annotated-cell-13-6"><a href="#annotated-cell-13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u026A</span><span class="st">&#39;</span>: {  <span class="co"># ɪ</span></span>
+<span id="annotated-cell-13-7"><a href="#annotated-cell-13-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;bit&#39;</span>: <span class="vs">r&#39;\bbit\b&#39;</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="4">4</button><span id="annotated-cell-13-8" class="code-annotation-target"><a href="#annotated-cell-13-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;finish&#39;</span>: <span class="vs">r&#39;\bfinish&#39;</span>,</span>
+<span id="annotated-cell-13-9"><a href="#annotated-cell-13-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;pin&#39;</span>: <span class="vs">r&#39;\bpin\b&#39;</span>},</span>
+<span id="annotated-cell-13-10"><a href="#annotated-cell-13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u025B</span><span class="st">&#39;</span>: {  <span class="co"># ɛ</span></span>
+<span id="annotated-cell-13-11"><a href="#annotated-cell-13-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;bet&#39;</span>: <span class="vs">r&#39;\bbet\b&#39;</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="5">5</button><span id="annotated-cell-13-12" class="code-annotation-target"><a href="#annotated-cell-13-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;guest&#39;</span>: <span class="vs">r&#39;\bguest&#39;</span>,</span>
+<span id="annotated-cell-13-13"><a href="#annotated-cell-13-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;says&#39;</span>: <span class="vs">r&#39;\bsays\b&#39;</span>},</span>
+<span id="annotated-cell-13-14"><a href="#annotated-cell-13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u00E6</span><span class="st">&#39;</span>: {  <span class="co"># æ</span></span>
+<span id="annotated-cell-13-15"><a href="#annotated-cell-13-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;bang&#39;</span>: <span class="vs">r&#39;\bbang\b&#39;</span>,</span>
+<span id="annotated-cell-13-16"><a href="#annotated-cell-13-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;hand&#39;</span>: <span class="vs">r&#39;\bhand\b&#39;</span>,</span>
+<span id="annotated-cell-13-17"><a href="#annotated-cell-13-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;laugh&#39;</span>: <span class="vs">r&#39;\blaugh\b&#39;</span>},</span>
+<span id="annotated-cell-13-18"><a href="#annotated-cell-13-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u0075</span><span class="st">&#39;</span>: {  <span class="co"># u</span></span>
+<span id="annotated-cell-13-19"><a href="#annotated-cell-13-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;blue&#39;</span>: <span class="vs">r&#39;\bblue\b&#39;</span>,</span>
+<span id="annotated-cell-13-20"><a href="#annotated-cell-13-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;through&#39;</span>: <span class="vs">r&#39;\bthrough\b&#39;</span>,</span>
+<span id="annotated-cell-13-21"><a href="#annotated-cell-13-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;who&#39;</span>: <span class="vs">r&#39;\bwho\b&#39;</span>},</span>
+<span id="annotated-cell-13-22"><a href="#annotated-cell-13-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u028A</span><span class="st">&#39;</span>: {  <span class="co"># ʊ</span></span>
+<span id="annotated-cell-13-23"><a href="#annotated-cell-13-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;could&#39;</span>: <span class="vs">r&#39;\bcould\b&#39;</span>,</span>
+<span id="annotated-cell-13-24"><a href="#annotated-cell-13-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;foot&#39;</span>: <span class="vs">r&#39;\bfoot\b&#39;</span>,</span>
+<span id="annotated-cell-13-25"><a href="#annotated-cell-13-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;put&#39;</span>: <span class="vs">r&#39;\bput\b&#39;</span>},</span>
+<span id="annotated-cell-13-26"><a href="#annotated-cell-13-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u0254</span><span class="st">&#39;</span>: {  <span class="co"># ɔ</span></span>
+<span id="annotated-cell-13-27"><a href="#annotated-cell-13-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;bought&#39;</span>: <span class="vs">r&#39;\bbought\b&#39;</span>,</span>
+<span id="annotated-cell-13-28"><a href="#annotated-cell-13-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;core&#39;</span>: <span class="vs">r&#39;\bcore\b&#39;</span>,</span>
+<span id="annotated-cell-13-29"><a href="#annotated-cell-13-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;wrong&#39;</span>: <span class="vs">r&#39;\bwrong\b&#39;</span>},</span>
+<span id="annotated-cell-13-30"><a href="#annotated-cell-13-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u0251</span><span class="st">&#39;</span>: {  <span class="co"># ɑ</span></span>
+<span id="annotated-cell-13-31"><a href="#annotated-cell-13-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;ball&#39;</span>: <span class="vs">r&#39;ball\b|\bballs\b&#39;</span>,</span>
+<span id="annotated-cell-13-32"><a href="#annotated-cell-13-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;father&#39;</span>: <span class="vs">r&#39;\bfather\b&#39;</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="6">6</button><span id="annotated-cell-13-33" class="code-annotation-target"><a href="#annotated-cell-13-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;honorific&#39;</span>: <span class="vs">r&#39;\bhonorific&#39;</span>},</span>
+<span id="annotated-cell-13-34"><a href="#annotated-cell-13-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u028C</span><span class="st">&#39;</span>: {  <span class="co"># ʌ</span></span>
+<span id="annotated-cell-13-35"><a href="#annotated-cell-13-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;another&#39;</span>: <span class="vs">r&#39;\banother\b&#39;</span>,</span>
+<span id="annotated-cell-13-36"><a href="#annotated-cell-13-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;but&#39;</span>: <span class="vs">r&#39;\bbut\b&#39;</span>,</span>
+<span id="annotated-cell-13-37"><a href="#annotated-cell-13-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;fun&#39;</span>: <span class="vs">r&#39;\bfun\b&#39;</span>},</span>
+<span id="annotated-cell-13-38"><a href="#annotated-cell-13-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;</span><span class="ch">\u0259</span><span class="st">&#39;</span>: {  <span class="co"># ə</span></span>
+<span id="annotated-cell-13-39"><a href="#annotated-cell-13-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;among&#39;</span>: <span class="vs">r&#39;\bamong\b&#39;</span>,</span>
+<span id="annotated-cell-13-40"><a href="#annotated-cell-13-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;famous&#39;</span>: <span class="vs">r&#39;\bfamous\b&#39;</span>,</span>
+<span id="annotated-cell-13-41"><a href="#annotated-cell-13-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;support&#39;</span>: <span class="vs">r&#39;\bsupport\b&#39;</span>}</span>
+<span id="annotated-cell-13-42"><a href="#annotated-cell-13-42" aria-hidden="true" tabindex="-1"></a>}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-13" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="1" data-code-annotation="1">Set up a nested dictionary, where the outer keys are the IPA vowels, the inner keys are the words, and the values are the regex strings for the words.</span>
+</dd>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="2" data-code-annotation="2"><code>\u</code> makes it a unicode string.</span>
+</dd>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="3" data-code-annotation="3"><code>\b</code> means search at word boundaries, and only a few words here also include suffixes (e.g., only return results for <code>bit</code>, but return results for <code>finish</code>, <code>finishes</code>, and <code>finishing</code>).</span>
+</dd>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="8" data-code-annotation="4">Also get <code>finishes</code>/<code>finishing</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="12" data-code-annotation="5">Also get <code>guests</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-13" data-code-lines="33" data-code-annotation="6">Also get <code>honorifics</code>. Using <code>honorific</code> instead of <code>honor</code> because there’s an episode about honorifics.</span>
+</dd>
+</dl>
+</div>
+</div>
+</section>
+<section id="find-words-in-transcript" class="level4" data-number="1.3.2">
+<h4 data-number="1.3.2" class="anchored" data-anchor-id="find-words-in-transcript"><span class="header-section-number">1.3.2</span> Find Words In Transcript</h4>
+<p>This function goes through the transcript dataframe and finds turns by <code>Gretchen</code> or <code>Lauren</code> containing the target words:</p>
+<div id="function-filter-words" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="annotated-cell-14"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-14-1"><a href="#annotated-cell-14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filter_for_words(words, df_all):</span>
+<span id="annotated-cell-14-2"><a href="#annotated-cell-14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Find turns by Gretchen/Lauren that contain the target words.&quot;&quot;&quot;</span></span>
+<span id="annotated-cell-14-3"><a href="#annotated-cell-14-3" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="1">1</button><span id="annotated-cell-14-4" class="code-annotation-target"><a href="#annotated-cell-14-4" aria-hidden="true" tabindex="-1"></a>    df_gl <span class="op">=</span> df_all[</span>
+<span id="annotated-cell-14-5"><a href="#annotated-cell-14-5" aria-hidden="true" tabindex="-1"></a>        (df_all[<span class="st">&#39;Speaker&#39;</span>] <span class="op">==</span> <span class="st">&quot;Gretchen&quot;</span>) <span class="op">|</span></span>
+<span id="annotated-cell-14-6"><a href="#annotated-cell-14-6" aria-hidden="true" tabindex="-1"></a>        (df_all[<span class="st">&#39;Speaker&#39;</span>] <span class="op">==</span> <span class="st">&quot;Lauren&quot;</span>)</span>
+<span id="annotated-cell-14-7"><a href="#annotated-cell-14-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="annotated-cell-14-8"><a href="#annotated-cell-14-8" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="2">2</button><span id="annotated-cell-14-9" class="code-annotation-target"><a href="#annotated-cell-14-9" aria-hidden="true" tabindex="-1"></a>    df_words <span class="op">=</span> pd.DataFrame()</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="3">3</button><span id="annotated-cell-14-10" class="code-annotation-target"><a href="#annotated-cell-14-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> vowel, examples <span class="kw">in</span> words.items():</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="4">4</button><span id="annotated-cell-14-11" class="code-annotation-target"><a href="#annotated-cell-14-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> word, reg <span class="kw">in</span> examples.items():</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="5">5</button><span id="annotated-cell-14-12" class="code-annotation-target"><a href="#annotated-cell-14-12" aria-hidden="true" tabindex="-1"></a>            has_word <span class="op">=</span> df_gl[</span>
+<span id="annotated-cell-14-13"><a href="#annotated-cell-14-13" aria-hidden="true" tabindex="-1"></a>                df_gl[<span class="st">&#39;Text&#39;</span>].<span class="bu">str</span>.contains(pat<span class="op">=</span>reg, flags<span class="op">=</span>re.IGNORECASE)</span>
+<span id="annotated-cell-14-14"><a href="#annotated-cell-14-14" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="6">6</button><span id="annotated-cell-14-15" class="code-annotation-target"><a href="#annotated-cell-14-15" aria-hidden="true" tabindex="-1"></a>            has_word.insert(<span class="dv">0</span>, <span class="st">&#39;Vowel&#39;</span>, vowel)</span>
+<span id="annotated-cell-14-16"><a href="#annotated-cell-14-16" aria-hidden="true" tabindex="-1"></a>            has_word.insert(<span class="dv">1</span>, <span class="st">&#39;Word&#39;</span>, word)</span>
+<span id="annotated-cell-14-17"><a href="#annotated-cell-14-17" aria-hidden="true" tabindex="-1"></a>            has_word.set_index([<span class="st">&#39;Word&#39;</span>, <span class="st">&#39;Vowel&#39;</span>], inplace<span class="op">=</span><span class="va">True</span>, append<span class="op">=</span><span class="va">True</span>)</span>
+<span id="annotated-cell-14-18"><a href="#annotated-cell-14-18" aria-hidden="true" tabindex="-1"></a>            has_word.index <span class="op">=</span> has_word.index.reorder_levels(</span>
+<span id="annotated-cell-14-19"><a href="#annotated-cell-14-19" aria-hidden="true" tabindex="-1"></a>                [<span class="st">&#39;Vowel&#39;</span>, <span class="st">&#39;Word&#39;</span>, <span class="st">&#39;Episode&#39;</span>, <span class="st">&#39;Turn&#39;</span>])</span>
+<span id="annotated-cell-14-20"><a href="#annotated-cell-14-20" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="7">7</button><span id="annotated-cell-14-21" class="code-annotation-target"><a href="#annotated-cell-14-21" aria-hidden="true" tabindex="-1"></a>            df_words <span class="op">=</span> pd.concat([df_words, has_word])</span>
+<span id="annotated-cell-14-22"><a href="#annotated-cell-14-22" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-14" data-target-annotation="8">8</button><span id="annotated-cell-14-23" class="code-annotation-target"><a href="#annotated-cell-14-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df_words.sort_index()</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-14" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="4" data-code-annotation="1">Filter to only include rows where <code>Speaker</code> is <code>Gretchen</code> or <code>Lauren</code>, not guests.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="9" data-code-annotation="2">Create dataframe to store results.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="10" data-code-annotation="3">Loop through outer layer of dictionary, where keys are vowels and values are lists of example words.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="11" data-code-annotation="4">Loop through inner dictionaries, where keys are the words and values are the regexes.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="12" data-code-annotation="5">Filter to only include rows where <code>Text</code> column matches word regex. <code>re.IGNORECASE</code> means the search is not case-sensitive.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="15,16,17,18" data-code-annotation="6">Make columns for the current <code>Vowel</code> and <code>Word</code>, then add them to the index. The results dataframe is now indexed by unique combinations of <code>Vowel</code>, <code>Word</code>, <code>Episode</code>, and <code>Turn</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="7">7</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="21" data-code-annotation="7">Add results for current word to dataframe of all results.</span>
+</dd>
+<dt data-target-cell="annotated-cell-14" data-target-annotation="8">8</dt>
+<dd>
+<span data-code-cell="annotated-cell-14" data-code-lines="23" data-code-annotation="8">Sorting the dataframe indices makes search faster later, and pandas will throw warnings if you search this large-ish dataframe before sorting.</span>
+</dd>
+</dl>
+</div>
+</div>
+<p>Next, this function trims the conversation turn around the target word, so it can be matched to the caption timestamps later:</p>
+<div id="function-trim-turns" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="annotated-cell-15"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-15-1"><a href="#annotated-cell-15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trim_turn(df):</span>
+<span id="annotated-cell-15-2"><a href="#annotated-cell-15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Find location of target word in conversation turn and subset -/+ 25 characters around it.&quot;&quot;&quot;</span></span>
+<span id="annotated-cell-15-3"><a href="#annotated-cell-15-3" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="1">1</button><span id="annotated-cell-15-4" class="code-annotation-target"><a href="#annotated-cell-15-4" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">&#39;Text_Subset&#39;</span>] <span class="op">=</span> pd.Series(dtype<span class="op">=</span><span class="st">&#39;string&#39;</span>)</span>
+<span id="annotated-cell-15-5"><a href="#annotated-cell-15-5" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="2">2</button><span id="annotated-cell-15-6" class="code-annotation-target"><a href="#annotated-cell-15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> vowel, word, episode, turn <span class="kw">in</span> df.index:</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="3">3</button><span id="annotated-cell-15-7" class="code-annotation-target"><a href="#annotated-cell-15-7" aria-hidden="true" tabindex="-1"></a>        text_full <span class="op">=</span> df.loc[vowel, word, episode, turn][<span class="st">&#39;Text&#39;</span>]</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="4">4</button><span id="annotated-cell-15-8" class="code-annotation-target"><a href="#annotated-cell-15-8" aria-hidden="true" tabindex="-1"></a>        word_loc <span class="op">=</span> re.search(re.<span class="bu">compile</span>(word, re.IGNORECASE), text_full)</span>
+<span id="annotated-cell-15-9"><a href="#annotated-cell-15-9" aria-hidden="true" tabindex="-1"></a>        word_loc <span class="op">=</span> word_loc.span()[<span class="dv">0</span>]</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="5">5</button><span id="annotated-cell-15-10" class="code-annotation-target"><a href="#annotated-cell-15-10" aria-hidden="true" tabindex="-1"></a>        sub_start <span class="op">=</span> <span class="bu">max</span>(word_loc <span class="op">-</span> <span class="dv">25</span>, <span class="dv">0</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="6">6</button><span id="annotated-cell-15-11" class="code-annotation-target"><a href="#annotated-cell-15-11" aria-hidden="true" tabindex="-1"></a>        sub_end <span class="op">=</span> <span class="bu">min</span>(word_loc <span class="op">+</span> <span class="dv">25</span>, <span class="bu">len</span>(text_full))</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="7">7</button><span id="annotated-cell-15-12" class="code-annotation-target"><a href="#annotated-cell-15-12" aria-hidden="true" tabindex="-1"></a>        text_sub <span class="op">=</span> text_full[sub_start:sub_end]</span>
+<span id="annotated-cell-15-13"><a href="#annotated-cell-15-13" aria-hidden="true" tabindex="-1"></a>        df.loc[(vowel, word, episode, turn), <span class="st">&#39;Text_Subset&#39;</span>] <span class="op">=</span> <span class="bu">str</span>(text_sub)</span>
+<span id="annotated-cell-15-14"><a href="#annotated-cell-15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-15-15"><a href="#annotated-cell-15-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-15" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="4" data-code-annotation="1">Make a new column for the subset text, so it can be specified as a string. If you insert values later without initializing the column as a string, pandas will throw warnings.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="6" data-code-annotation="2">Go through each row of the dataframe with all the transcript turns by Gretchen or Lauren that contain target words.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="7" data-code-annotation="3">Use index values to get the value of <code>Text</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="8,9" data-code-annotation="4">Search for the current row’s <code>Word</code> in the current row’s <code>Text</code> (again case-insensitive). This returns a search object, and the first item in that tuple is the location of the first letter of <code>Word</code> in <code>Text</code>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="10" data-code-annotation="5">Start index of <code>Text_Subset</code> is 25 characters before the start of the <code>Word</code>, or the beginning of the string, whichever is larger.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="11" data-code-annotation="6">End index of <code>Text_Subset</code> is 25 characters after the start of the <code>Word</code>, or the end of the string, whichever is smaller.</span>
+</dd>
+<dt data-target-cell="annotated-cell-15" data-target-annotation="7">7</dt>
+<dd>
+<span data-code-cell="annotated-cell-15" data-code-lines="12,13" data-code-annotation="7">Insert <code>Text_Subset</code> into dataframe.</span>
+</dd>
+</dl>
+</div>
+</div>
+<p>Subset the transcripts dataframe to only include turns by Gretchen/Lauren that contain a target word:</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="annotated-cell-16"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-16" data-target-annotation="1">1</button><span id="annotated-cell-16-1" class="code-annotation-target"><a href="#annotated-cell-16-1" aria-hidden="true" tabindex="-1"></a>transcripts_subset <span class="op">=</span> filter_for_words(word_list, transcripts)</span>
+<span id="annotated-cell-16-2"><a href="#annotated-cell-16-2" aria-hidden="true" tabindex="-1"></a>transcripts_subset <span class="op">=</span> trim_turn(transcripts_subset)</span>
+<span id="annotated-cell-16-3"><a href="#annotated-cell-16-3" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-16" data-target-annotation="2">2</button><span id="annotated-cell-16-4" class="code-annotation-target"><a href="#annotated-cell-16-4" aria-hidden="true" tabindex="-1"></a>pd.concat([transcripts_subset.head(), transcripts_subset.tail()]).style</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-16" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-16" data-code-lines="1,2" data-code-annotation="1">Run the two functions just defined on the dataframe of all the transcripts, to filter to only include turns by Gretchen or Lauren that contain the target words, then trim the text of each turn around the target word.</span>
+</dd>
+<dt data-target-cell="annotated-cell-16" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-16" data-code-lines="4" data-code-annotation="2">Show the first and last 10 rows of the resulting dataframe. <code>.style</code> prints it as a nicer-looking table.</span>
+</dd>
+</dl>
+</div>
+<div id="filter-transcript" class="cell-output cell-output-display" data-execution_count="33">
+<style type="text/css">
+</style>
+
+<table id="T_0d957" data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank" data-quarto-table-cell-role="th"> </th>
+<th class="blank" data-quarto-table-cell-role="th"> </th>
+<th class="blank" data-quarto-table-cell-role="th"> </th>
+<th class="blank level0" data-quarto-table-cell-role="th"> </th>
+<th id="T_0d957_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Speaker</th>
+<th id="T_0d957_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Text</th>
+<th id="T_0d957_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Text_Subset</th>
+</tr>
+<tr class="odd">
+<th class="index_name level0" data-quarto-table-cell-role="th">Vowel</th>
+<th class="index_name level1" data-quarto-table-cell-role="th">Word</th>
+<th class="index_name level2" data-quarto-table-cell-role="th">Episode</th>
+<th class="index_name level3" data-quarto-table-cell-role="th">Turn</th>
+<th class="blank col0" data-quarto-table-cell-role="th"> </th>
+<th class="blank col1" data-quarto-table-cell-role="th"> </th>
+<th class="blank col2" data-quarto-table-cell-role="th"> </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="5" id="T_0d957_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">i</td>
+<td rowspan="5" id="T_0d957_level1_row0" class="row_heading level1 row0" data-quarto-table-cell-role="th">beat</td>
+<td id="T_0d957_level2_row0" class="row_heading level2 row0" data-quarto-table-cell-role="th">1</td>
+<td id="T_0d957_level3_row0" class="row_heading level3 row0" data-quarto-table-cell-role="th">119</td>
+<td id="T_0d957_row0_col0" class="data row0 col0">Gretchen</td>
+<td id="T_0d957_row0_col1" class="data row0 col1">no, but you like, you just beat the potato but you don&#39;t necessarily deep-fried it you could just pan-fry it.</td>
+<td id="T_0d957_row0_col2" class="data row0 col2">, but you like, you just beat the potato but you d</td>
+</tr>
+<tr class="even">
+<td id="T_0d957_level2_row1" class="row_heading level2 row1" data-quarto-table-cell-role="th">12</td>
+<td id="T_0d957_level3_row1" class="row_heading level3 row1" data-quarto-table-cell-role="th">86</td>
+<td id="T_0d957_row1_col0" class="data row1 col0">Gretchen</td>
+<td id="T_0d957_row1_col1" class="data row1 col1">Yeah, we make it into something like what we have. But another example is, so the sound /ɪ/ as in &#39;bit,&#39; is not a sound that French has. So you&#39;ll have French speakers saying -- well, it kind of has it, but not really -- so if you have something like &#39;beat&#39; versus &#39;bit,&#39; for French speakers those are both just kind of &#39;beat.&#39;</td>
+<td id="T_0d957_row1_col2" class="data row1 col2">you have something like &#39;beat&#39; versus &#39;bit,&#39; for F</td>
+</tr>
+<tr class="odd">
+<td rowspan="2" id="T_0d957_level2_row2" class="row_heading level2 row2" data-quarto-table-cell-role="th">18</td>
+<td id="T_0d957_level3_row2" class="row_heading level3 row2" data-quarto-table-cell-role="th">68</td>
+<td id="T_0d957_row2_col0" class="data row2 col0">Gretchen</td>
+<td id="T_0d957_row2_col1" class="data row2 col1">And so you have your, like, duh-DUH beat, your iamb, with weak-strong --</td>
+<td id="T_0d957_row2_col2" class="data row2 col2">have your, like, duh-DUH beat, your iamb, with wea</td>
+</tr>
+<tr class="even">
+<td id="T_0d957_level3_row3" class="row_heading level3 row3" data-quarto-table-cell-role="th">100</td>
+<td id="T_0d957_row3_col0" class="data row3 col0">Gretchen</td>
+<td id="T_0d957_row3_col1" class="data row3 col1">And the other translators tend to render it in prose, or in, like, shortened lines, but without paying attention to that beat in the same sort of way.</td>
+<td id="T_0d957_row3_col2" class="data row3 col2">paying attention to that beat in the same sort of</td>
+</tr>
+<tr class="odd">
+<td id="T_0d957_level2_row4" class="row_heading level2 row4" data-quarto-table-cell-role="th">22</td>
+<td id="T_0d957_level3_row4" class="row_heading level3 row4" data-quarto-table-cell-role="th">208</td>
+<td id="T_0d957_row4_col0" class="data row4 col0">Lauren</td>
+<td id="T_0d957_row4_col1" class="data row4 col1">Yep. I&#39;ve already used the word &#39;proximal&#39; in this episode so you&#39;re gonna beat me.</td>
+<td id="T_0d957_row4_col2" class="data row4 col2">episode so you&#39;re gonna beat me.</td>
+</tr>
+<tr class="even">
+<td rowspan="5" id="T_0d957_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">ʌ</td>
+<td rowspan="5" id="T_0d957_level1_row5" class="row_heading level1 row5" data-quarto-table-cell-role="th">fun</td>
+<td rowspan="2" id="T_0d957_level2_row5" class="row_heading level2 row5" data-quarto-table-cell-role="th">82</td>
+<td id="T_0d957_level3_row5" class="row_heading level3 row5" data-quarto-table-cell-role="th">127</td>
+<td id="T_0d957_row5_col0" class="data row5 col0">Gretchen</td>
+<td id="T_0d957_row5_col1" class="data row5 col1">Yes, we did. Because it&#39;s sometimes when you know that you&#39;re gonna need a whole bunch of examples in a text or an episode, it&#39;s fun to theme them so that you&#39;re not just reaching for the same -- like I think we used examples like &#39;I like cake&#39; a lot, or like, &#39;I eat ice cream.&#39; A lot of our examples are about ice cream and cake, which is fun. I mean, we do like both of these things, but sometimes, for an episode that&#39;s gonna be really example heavy, using horses and farmyard animals and stuff is a fun way to make it a little more distinct from other episodes.</td>
+<td id="T_0d957_row5_col2" class="data row5 col2">text or an episode, it&#39;s fun to theme them so that</td>
+</tr>
+<tr class="odd">
+<td id="T_0d957_level3_row6" class="row_heading level3 row6" data-quarto-table-cell-role="th">137</td>
+<td id="T_0d957_row6_col0" class="data row6 col0">Gretchen</td>
+<td id="T_0d957_row6_col1" class="data row6 col1">That was a deliberate choice back in the day. That was a style guide thing. Undoing that, now that it&#39;s become this unconscious thing that people are still doing, is more challenging. The fun thing, I guess, about how a lot of example sentences in old school syntax papers use &#39;John&#39; and &#39;Mary&#39; and &#39;Bill&#39; is that there is someone who took a bunch of example sentences from papers since the refer to the same people and stitched them together into a single narrative about the adventures of John and Mary and Bill.</td>
+<td id="T_0d957_row6_col2" class="data row6 col2">is more challenging. The fun thing, I guess, about</td>
+</tr>
+<tr class="even">
+<td id="T_0d957_level2_row7" class="row_heading level2 row7" data-quarto-table-cell-role="th">83</td>
+<td id="T_0d957_level3_row7" class="row_heading level3 row7" data-quarto-table-cell-role="th">1</td>
+<td id="T_0d957_row7_col0" class="data row7 col0">Gretchen</td>
+<td id="T_0d957_row7_col1" class="data row7 col1">Welcome to Lingthusiasm, a podcast that&#39;s enthusiastic about linguistics! I&#39;m Gretchen McCulloch. I&#39;m here with Dr. Pedro Mateo Pedro who&#39;s an Assistant Professor at the University of Toronto, Canada, a native speaker of Q&#39;anjob&#39;al, and a learner of Kaqchikel. Today, we&#39;re getting enthusiastic about kids acquiring Indigenous languages. But first, some announcements. We love looking up whether two words that look kind of similar are actually historically related, but the history of a word doesn&#39;t have to define how it&#39;s used today. To celebrate how we can grow up to be more than we ever expected, we have new merch that says, &#39;Etymology isn&#39;t Destiny.&#39; Our artist, Lucy Maddox, has made &#39;Etymology isn&#39;t Destiny&#39; into a swoopy, cursive design with a fun little destiny star on the dot of the eye, available in black, white, and my personal favourite, rainbow gradient. This design is available on lots of different colours and styles of shirts. We&#39;ve got hoodies, tank tops, t-shirts in classic fit, relaxed fit, curved fit -- plus mugs, notebooks, stickers, water bottles, zipper pouches. You know, if it&#39;s on Redbubble, we might&#39;ve put &#39;Etymology isn&#39;t Destiny&#39; on it. We also have tons of other lingthusiastic merch available in our merch store at lingthusiasm.com/merch. I have to say, it makes a great gift to give to a linguistics enthusiast in your life or to request as a gift if you are that linguistics enthusiast. We also wanna give a special shoutout to our aesthetic redesign of the International Phonetic Alphabet. Last year, we reorganised the classic IPA chart to have colours and have little cute circles and not just be boring grey lines of boxes and to even more elegantly represent the principle that the location of the symbols and rows and columns represents the place and degree of constriction in the mouth. I think it looks really cool. It&#39;s also a fun little puzzle to sit there and figure out which of the specific circles around different things stands for what. We&#39;ve now made this aesthetic IPA chart redesign available on lots more merch options, including several different sizes of posters from small ones you can put on a corkboard to large ones you can put up in your hallway. They look really, really good, especially if you have some sort of office-y space that needs to be decorated. Plus, it&#39;s on tote bags and notebooks and t-shirts. If you want everyone you meet to know that you&#39;re a giant linguistics nerd, you can take them to conferences and use them to start nerdy conversations with people. If you like the idea of linguistics merch but none of ours so far is quite hitting your aesthetic, or if there&#39;s an item that Redbubble sells that you think one of our existing designs would look good on, we&#39;ve added quite a few merch items in response to people&#39;s requests over the years, so we&#39;d love to know where the gaps still are and keep an eye on lingthusiasm.com/merch. Our most recent bonus episode was a behind-the-scenes interview with Sarah Dopierala, who you may recognise as a name from the end credits, about what it&#39;s like doing transcripts from a linguistics perspective and her life generally as a linguistics grad student. You can go to patreon.com/lingthusiasm to get access to all of the many bonus episodes and to help Lingthusiasm keep running. [Music]</td>
+<td id="T_0d957_row7_col2" class="data row7 col2">y, cursive design with a fun little destiny star o</td>
+</tr>
+<tr class="odd">
+<td rowspan="2" id="T_0d957_level2_row8" class="row_heading level2 row8" data-quarto-table-cell-role="th">84</td>
+<td id="T_0d957_level3_row8" class="row_heading level3 row8" data-quarto-table-cell-role="th">167</td>
+<td id="T_0d957_row8_col0" class="data row8 col0">Gretchen</td>
+<td id="T_0d957_row8_col1" class="data row8 col1">I find this a fun and interesting way of thinking about meaning because the way that I think we&#39;re sometimes introduced to meaning in a formal context is through dictionary definitions that give you a description of a cat that says something like, &#39;A cat is a furry creature with four legs, a long tail, purrs,&#39; whatever other attributes you wanna assign to a cat. But in practice, I didn&#39;t learn the word &#39;cat&#39; by looking it up in a dictionary or having a description provided to me. I learned the word &#39;cat&#39; by having a bunch of cats pointed out to me. Sometimes, a cat has three legs or is one of those weird hairless cats.</td>
+<td id="T_0d957_row8_col2" class="data row8 col2">I find this a fun and interesting way o</td>
+</tr>
+<tr class="even">
+<td id="T_0d957_level3_row9" class="row_heading level3 row9" data-quarto-table-cell-role="th">173</td>
+<td id="T_0d957_row9_col0" class="data row9 col0">Gretchen</td>
+<td id="T_0d957_row9_col1" class="data row9 col1">We did a whole bonus episode about meaning and the ways that we interact with it talking about the &#39;Is a pizza a sandwich?&#39; meme, which I would highly recommend because I think it&#39;s a very fun bonus episode. It turns out that this is actually how meaning works for most people in context. You see a bunch of examples of cats or birds or chairs or whatever. You come up with a sense of what&#39;s in the cluster based on generalising from those examples rather than by having an exact list of parameters because some stuff is an exception to those parameters, and it&#39;s still a point in the cluster.</td>
+<td id="T_0d957_row9_col2" class="data row9 col2">ause I think it&#39;s a very fun bonus episode. It tur</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here’s how many tokens we have for each speaker and word:</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="annotated-cell-17"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-17-1"><a href="#annotated-cell-17-1" aria-hidden="true" tabindex="-1"></a>transcripts_subset <span class="op">\</span></span>
+<span id="annotated-cell-17-2"><a href="#annotated-cell-17-2" aria-hidden="true" tabindex="-1"></a>    .value_counts([<span class="st">&#39;Vowel&#39;</span>, <span class="st">&#39;Word&#39;</span>, <span class="st">&#39;Speaker&#39;</span>], sort<span class="op">=</span><span class="va">False</span>) <span class="op">\</span></span>
+<span id="annotated-cell-17-3"><a href="#annotated-cell-17-3" aria-hidden="true" tabindex="-1"></a>    .to_frame(<span class="st">&#39;Tokens&#39;</span>) <span class="op">\</span></span>
+<span id="annotated-cell-17-4"><a href="#annotated-cell-17-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(drop<span class="op">=</span><span class="va">False</span>) <span class="op">\</span></span>
+<span id="annotated-cell-17-5"><a href="#annotated-cell-17-5" aria-hidden="true" tabindex="-1"></a>    .style <span class="op">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-17" data-target-annotation="1">1</button><span id="annotated-cell-17-6" class="code-annotation-target"><a href="#annotated-cell-17-6" aria-hidden="true" tabindex="-1"></a>    .hide()</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-17" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-17" data-code-lines="6" data-code-annotation="1">Count the number of items in each combination of <code>Vowel</code>, <code>Word</code>, and <code>Speaker</code>. Convert those results to a dataframe and call the column of counts <code>Tokens</code>. Change <code>Vowel</code>, <code>Word</code>, and <code>Speaker</code> from indices to columns. Print the results as a table, not including row numbers.</span>
+</dd>
+</dl>
+</div>
+<div id="word-counts" class="cell-output cell-output-display" data-execution_count="34">
+<style type="text/css">
+</style>
+
+<table id="T_59de9" data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th id="T_59de9_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Vowel</th>
+<th id="T_59de9_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Word</th>
+<th id="T_59de9_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Speaker</th>
+<th id="T_59de9_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_59de9_row0_col0" class="data row0 col0">i</td>
+<td id="T_59de9_row0_col1" class="data row0 col1">beat</td>
+<td id="T_59de9_row0_col2" class="data row0 col2">Gretchen</td>
+<td id="T_59de9_row0_col3" class="data row0 col3">10</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row1_col0" class="data row1 col0">i</td>
+<td id="T_59de9_row1_col1" class="data row1 col1">beat</td>
+<td id="T_59de9_row1_col2" class="data row1 col2">Lauren</td>
+<td id="T_59de9_row1_col3" class="data row1 col3">8</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row2_col0" class="data row2 col0">i</td>
+<td id="T_59de9_row2_col1" class="data row2 col1">believe</td>
+<td id="T_59de9_row2_col2" class="data row2 col2">Gretchen</td>
+<td id="T_59de9_row2_col3" class="data row2 col3">25</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row3_col0" class="data row3 col0">i</td>
+<td id="T_59de9_row3_col1" class="data row3 col1">believe</td>
+<td id="T_59de9_row3_col2" class="data row3 col2">Lauren</td>
+<td id="T_59de9_row3_col3" class="data row3 col3">23</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row4_col0" class="data row4 col0">i</td>
+<td id="T_59de9_row4_col1" class="data row4 col1">people</td>
+<td id="T_59de9_row4_col2" class="data row4 col2">Gretchen</td>
+<td id="T_59de9_row4_col3" class="data row4 col3">981</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row5_col0" class="data row5 col0">i</td>
+<td id="T_59de9_row5_col1" class="data row5 col1">people</td>
+<td id="T_59de9_row5_col2" class="data row5 col2">Lauren</td>
+<td id="T_59de9_row5_col3" class="data row5 col3">679</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row6_col0" class="data row6 col0">u</td>
+<td id="T_59de9_row6_col1" class="data row6 col1">blue</td>
+<td id="T_59de9_row6_col2" class="data row6 col2">Gretchen</td>
+<td id="T_59de9_row6_col3" class="data row6 col3">29</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row7_col0" class="data row7 col0">u</td>
+<td id="T_59de9_row7_col1" class="data row7 col1">blue</td>
+<td id="T_59de9_row7_col2" class="data row7 col2">Lauren</td>
+<td id="T_59de9_row7_col3" class="data row7 col3">11</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row8_col0" class="data row8 col0">u</td>
+<td id="T_59de9_row8_col1" class="data row8 col1">through</td>
+<td id="T_59de9_row8_col2" class="data row8 col2">Gretchen</td>
+<td id="T_59de9_row8_col3" class="data row8 col3">123</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row9_col0" class="data row9 col0">u</td>
+<td id="T_59de9_row9_col1" class="data row9 col1">through</td>
+<td id="T_59de9_row9_col2" class="data row9 col2">Lauren</td>
+<td id="T_59de9_row9_col3" class="data row9 col3">120</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row10_col0" class="data row10 col0">u</td>
+<td id="T_59de9_row10_col1" class="data row10 col1">who</td>
+<td id="T_59de9_row10_col2" class="data row10 col2">Gretchen</td>
+<td id="T_59de9_row10_col3" class="data row10 col3">512</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row11_col0" class="data row11 col0">u</td>
+<td id="T_59de9_row11_col1" class="data row11 col1">who</td>
+<td id="T_59de9_row11_col2" class="data row11 col2">Lauren</td>
+<td id="T_59de9_row11_col3" class="data row11 col3">329</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row12_col0" class="data row12 col0">æ</td>
+<td id="T_59de9_row12_col1" class="data row12 col1">bang</td>
+<td id="T_59de9_row12_col2" class="data row12 col2">Gretchen</td>
+<td id="T_59de9_row12_col3" class="data row12 col3">4</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row13_col0" class="data row13 col0">æ</td>
+<td id="T_59de9_row13_col1" class="data row13 col1">bang</td>
+<td id="T_59de9_row13_col2" class="data row13 col2">Lauren</td>
+<td id="T_59de9_row13_col3" class="data row13 col3">2</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row14_col0" class="data row14 col0">æ</td>
+<td id="T_59de9_row14_col1" class="data row14 col1">hand</td>
+<td id="T_59de9_row14_col2" class="data row14 col2">Gretchen</td>
+<td id="T_59de9_row14_col3" class="data row14 col3">48</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row15_col0" class="data row15 col0">æ</td>
+<td id="T_59de9_row15_col1" class="data row15 col1">hand</td>
+<td id="T_59de9_row15_col2" class="data row15 col2">Lauren</td>
+<td id="T_59de9_row15_col3" class="data row15 col3">31</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row16_col0" class="data row16 col0">æ</td>
+<td id="T_59de9_row16_col1" class="data row16 col1">laugh</td>
+<td id="T_59de9_row16_col2" class="data row16 col2">Gretchen</td>
+<td id="T_59de9_row16_col3" class="data row16 col3">7</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row17_col0" class="data row17 col0">æ</td>
+<td id="T_59de9_row17_col1" class="data row17 col1">laugh</td>
+<td id="T_59de9_row17_col2" class="data row17 col2">Lauren</td>
+<td id="T_59de9_row17_col3" class="data row17 col3">5</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row18_col0" class="data row18 col0">ɑ</td>
+<td id="T_59de9_row18_col1" class="data row18 col1">ball</td>
+<td id="T_59de9_row18_col2" class="data row18 col2">Gretchen</td>
+<td id="T_59de9_row18_col3" class="data row18 col3">15</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row19_col0" class="data row19 col0">ɑ</td>
+<td id="T_59de9_row19_col1" class="data row19 col1">ball</td>
+<td id="T_59de9_row19_col2" class="data row19 col2">Lauren</td>
+<td id="T_59de9_row19_col3" class="data row19 col3">11</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row20_col0" class="data row20 col0">ɑ</td>
+<td id="T_59de9_row20_col1" class="data row20 col1">father</td>
+<td id="T_59de9_row20_col2" class="data row20 col2">Gretchen</td>
+<td id="T_59de9_row20_col3" class="data row20 col3">9</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row21_col0" class="data row21 col0">ɑ</td>
+<td id="T_59de9_row21_col1" class="data row21 col1">father</td>
+<td id="T_59de9_row21_col2" class="data row21 col2">Lauren</td>
+<td id="T_59de9_row21_col3" class="data row21 col3">7</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row22_col0" class="data row22 col0">ɑ</td>
+<td id="T_59de9_row22_col1" class="data row22 col1">honorific</td>
+<td id="T_59de9_row22_col2" class="data row22 col2">Gretchen</td>
+<td id="T_59de9_row22_col3" class="data row22 col3">4</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row23_col0" class="data row23 col0">ɑ</td>
+<td id="T_59de9_row23_col1" class="data row23 col1">honorific</td>
+<td id="T_59de9_row23_col2" class="data row23 col2">Lauren</td>
+<td id="T_59de9_row23_col3" class="data row23 col3">5</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row24_col0" class="data row24 col0">ɔ</td>
+<td id="T_59de9_row24_col1" class="data row24 col1">bought</td>
+<td id="T_59de9_row24_col2" class="data row24 col2">Gretchen</td>
+<td id="T_59de9_row24_col3" class="data row24 col3">5</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row25_col0" class="data row25 col0">ɔ</td>
+<td id="T_59de9_row25_col1" class="data row25 col1">bought</td>
+<td id="T_59de9_row25_col2" class="data row25 col2">Lauren</td>
+<td id="T_59de9_row25_col3" class="data row25 col3">4</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row26_col0" class="data row26 col0">ɔ</td>
+<td id="T_59de9_row26_col1" class="data row26 col1">core</td>
+<td id="T_59de9_row26_col2" class="data row26 col2">Gretchen</td>
+<td id="T_59de9_row26_col3" class="data row26 col3">7</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row27_col0" class="data row27 col0">ɔ</td>
+<td id="T_59de9_row27_col1" class="data row27 col1">core</td>
+<td id="T_59de9_row27_col2" class="data row27 col2">Lauren</td>
+<td id="T_59de9_row27_col3" class="data row27 col3">2</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row28_col0" class="data row28 col0">ɔ</td>
+<td id="T_59de9_row28_col1" class="data row28 col1">wrong</td>
+<td id="T_59de9_row28_col2" class="data row28 col2">Gretchen</td>
+<td id="T_59de9_row28_col3" class="data row28 col3">49</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row29_col0" class="data row29 col0">ɔ</td>
+<td id="T_59de9_row29_col1" class="data row29 col1">wrong</td>
+<td id="T_59de9_row29_col2" class="data row29 col2">Lauren</td>
+<td id="T_59de9_row29_col3" class="data row29 col3">21</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row30_col0" class="data row30 col0">ə</td>
+<td id="T_59de9_row30_col1" class="data row30 col1">among</td>
+<td id="T_59de9_row30_col2" class="data row30 col2">Gretchen</td>
+<td id="T_59de9_row30_col3" class="data row30 col3">18</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row31_col0" class="data row31 col0">ə</td>
+<td id="T_59de9_row31_col1" class="data row31 col1">among</td>
+<td id="T_59de9_row31_col2" class="data row31 col2">Lauren</td>
+<td id="T_59de9_row31_col3" class="data row31 col3">6</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row32_col0" class="data row32 col0">ə</td>
+<td id="T_59de9_row32_col1" class="data row32 col1">famous</td>
+<td id="T_59de9_row32_col2" class="data row32 col2">Gretchen</td>
+<td id="T_59de9_row32_col3" class="data row32 col3">19</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row33_col0" class="data row33 col0">ə</td>
+<td id="T_59de9_row33_col1" class="data row33 col1">famous</td>
+<td id="T_59de9_row33_col2" class="data row33 col2">Lauren</td>
+<td id="T_59de9_row33_col3" class="data row33 col3">18</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row34_col0" class="data row34 col0">ə</td>
+<td id="T_59de9_row34_col1" class="data row34 col1">support</td>
+<td id="T_59de9_row34_col2" class="data row34 col2">Gretchen</td>
+<td id="T_59de9_row34_col3" class="data row34 col3">42</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row35_col0" class="data row35 col0">ə</td>
+<td id="T_59de9_row35_col1" class="data row35 col1">support</td>
+<td id="T_59de9_row35_col2" class="data row35 col2">Lauren</td>
+<td id="T_59de9_row35_col3" class="data row35 col3">24</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row36_col0" class="data row36 col0">ɛ</td>
+<td id="T_59de9_row36_col1" class="data row36 col1">bet</td>
+<td id="T_59de9_row36_col2" class="data row36 col2">Gretchen</td>
+<td id="T_59de9_row36_col3" class="data row36 col3">13</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row37_col0" class="data row37 col0">ɛ</td>
+<td id="T_59de9_row37_col1" class="data row37 col1">bet</td>
+<td id="T_59de9_row37_col2" class="data row37 col2">Lauren</td>
+<td id="T_59de9_row37_col3" class="data row37 col3">9</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row38_col0" class="data row38 col0">ɛ</td>
+<td id="T_59de9_row38_col1" class="data row38 col1">guest</td>
+<td id="T_59de9_row38_col2" class="data row38 col2">Gretchen</td>
+<td id="T_59de9_row38_col3" class="data row38 col3">22</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row39_col0" class="data row39 col0">ɛ</td>
+<td id="T_59de9_row39_col1" class="data row39 col1">guest</td>
+<td id="T_59de9_row39_col2" class="data row39 col2">Lauren</td>
+<td id="T_59de9_row39_col3" class="data row39 col3">3</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row40_col0" class="data row40 col0">ɛ</td>
+<td id="T_59de9_row40_col1" class="data row40 col1">says</td>
+<td id="T_59de9_row40_col2" class="data row40 col2">Gretchen</td>
+<td id="T_59de9_row40_col3" class="data row40 col3">93</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row41_col0" class="data row41 col0">ɛ</td>
+<td id="T_59de9_row41_col1" class="data row41 col1">says</td>
+<td id="T_59de9_row41_col2" class="data row41 col2">Lauren</td>
+<td id="T_59de9_row41_col3" class="data row41 col3">40</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row42_col0" class="data row42 col0">ɪ</td>
+<td id="T_59de9_row42_col1" class="data row42 col1">bit</td>
+<td id="T_59de9_row42_col2" class="data row42 col2">Gretchen</td>
+<td id="T_59de9_row42_col3" class="data row42 col3">267</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row43_col0" class="data row43 col0">ɪ</td>
+<td id="T_59de9_row43_col1" class="data row43 col1">bit</td>
+<td id="T_59de9_row43_col2" class="data row43 col2">Lauren</td>
+<td id="T_59de9_row43_col3" class="data row43 col3">242</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row44_col0" class="data row44 col0">ɪ</td>
+<td id="T_59de9_row44_col1" class="data row44 col1">finish</td>
+<td id="T_59de9_row44_col2" class="data row44 col2">Gretchen</td>
+<td id="T_59de9_row44_col3" class="data row44 col3">8</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row45_col0" class="data row45 col0">ɪ</td>
+<td id="T_59de9_row45_col1" class="data row45 col1">finish</td>
+<td id="T_59de9_row45_col2" class="data row45 col2">Lauren</td>
+<td id="T_59de9_row45_col3" class="data row45 col3">11</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row46_col0" class="data row46 col0">ɪ</td>
+<td id="T_59de9_row46_col1" class="data row46 col1">pin</td>
+<td id="T_59de9_row46_col2" class="data row46 col2">Gretchen</td>
+<td id="T_59de9_row46_col3" class="data row46 col3">18</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row47_col0" class="data row47 col0">ɪ</td>
+<td id="T_59de9_row47_col1" class="data row47 col1">pin</td>
+<td id="T_59de9_row47_col2" class="data row47 col2">Lauren</td>
+<td id="T_59de9_row47_col3" class="data row47 col3">5</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row48_col0" class="data row48 col0">ʊ</td>
+<td id="T_59de9_row48_col1" class="data row48 col1">could</td>
+<td id="T_59de9_row48_col2" class="data row48 col2">Gretchen</td>
+<td id="T_59de9_row48_col3" class="data row48 col3">444</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row49_col0" class="data row49 col0">ʊ</td>
+<td id="T_59de9_row49_col1" class="data row49 col1">could</td>
+<td id="T_59de9_row49_col2" class="data row49 col2">Lauren</td>
+<td id="T_59de9_row49_col3" class="data row49 col3">174</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row50_col0" class="data row50 col0">ʊ</td>
+<td id="T_59de9_row50_col1" class="data row50 col1">foot</td>
+<td id="T_59de9_row50_col2" class="data row50 col2">Gretchen</td>
+<td id="T_59de9_row50_col3" class="data row50 col3">13</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row51_col0" class="data row51 col0">ʊ</td>
+<td id="T_59de9_row51_col1" class="data row51 col1">foot</td>
+<td id="T_59de9_row51_col2" class="data row51 col2">Lauren</td>
+<td id="T_59de9_row51_col3" class="data row51 col3">6</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row52_col0" class="data row52 col0">ʊ</td>
+<td id="T_59de9_row52_col1" class="data row52 col1">put</td>
+<td id="T_59de9_row52_col2" class="data row52 col2">Gretchen</td>
+<td id="T_59de9_row52_col3" class="data row52 col3">250</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row53_col0" class="data row53 col0">ʊ</td>
+<td id="T_59de9_row53_col1" class="data row53 col1">put</td>
+<td id="T_59de9_row53_col2" class="data row53 col2">Lauren</td>
+<td id="T_59de9_row53_col3" class="data row53 col3">116</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row54_col0" class="data row54 col0">ʌ</td>
+<td id="T_59de9_row54_col1" class="data row54 col1">another</td>
+<td id="T_59de9_row54_col2" class="data row54 col2">Gretchen</td>
+<td id="T_59de9_row54_col3" class="data row54 col3">239</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row55_col0" class="data row55 col0">ʌ</td>
+<td id="T_59de9_row55_col1" class="data row55 col1">another</td>
+<td id="T_59de9_row55_col2" class="data row55 col2">Lauren</td>
+<td id="T_59de9_row55_col3" class="data row55 col3">130</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row56_col0" class="data row56 col0">ʌ</td>
+<td id="T_59de9_row56_col1" class="data row56 col1">but</td>
+<td id="T_59de9_row56_col2" class="data row56 col2">Gretchen</td>
+<td id="T_59de9_row56_col3" class="data row56 col3">1785</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row57_col0" class="data row57 col0">ʌ</td>
+<td id="T_59de9_row57_col1" class="data row57 col1">but</td>
+<td id="T_59de9_row57_col2" class="data row57 col2">Lauren</td>
+<td id="T_59de9_row57_col3" class="data row57 col3">1049</td>
+</tr>
+<tr class="odd">
+<td id="T_59de9_row58_col0" class="data row58 col0">ʌ</td>
+<td id="T_59de9_row58_col1" class="data row58 col1">fun</td>
+<td id="T_59de9_row58_col2" class="data row58 col2">Gretchen</td>
+<td id="T_59de9_row58_col3" class="data row58 col3">187</td>
+</tr>
+<tr class="even">
+<td id="T_59de9_row59_col0" class="data row59 col0">ʌ</td>
+<td id="T_59de9_row59_col1" class="data row59 col1">fun</td>
+<td id="T_59de9_row59_col2" class="data row59 col2">Lauren</td>
+<td id="T_59de9_row59_col3" class="data row59 col3">57</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Gretchen and Lauren each say all of the words more than once, and most of the words have 5+ tokens to pick from.</p>
 
 
 </section>
