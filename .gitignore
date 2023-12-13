@@ -1,4 +1,4 @@
-audio/words/*.wav
+audio/words/lexicalset*.wav
 audio/words/*.TextGrid
 audio/episodes/*.mp4
 _freeze/

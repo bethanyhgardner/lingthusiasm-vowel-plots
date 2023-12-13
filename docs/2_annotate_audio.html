@@ -3399,6 +3399,7 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup"><span class="header-section-number">2.1</span> Setup</a></li>
+  <li><a href="#trim-audio-from-episodes" id="toc-trim-audio-from-episodes" class="nav-link" data-scroll-target="#trim-audio-from-episodes"><span class="header-section-number">2.2</span> Trim Audio from Episodes</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/blob/main/docs/2_annotate_audio.qmd" class="toc-action">View source</a></p></div></div></nav>
     </div>
@@ -3435,6 +3436,12 @@ vertical-align: -.125em;
 </header>
 
 <p><br></p>
+<p>There are two sets of data going into these vowel plots:</p>
+<ol type="1">
+<li>Vowels pulled from the Lingthusiasm episode recordings, which were located in <a href="1_find_vowels.qmd">Part 1</a></li>
+<li>Vowels from Gretchen &amp; Lauren recording the Wells lexical set for me</li>
+</ol>
+<p>The next steps are to trim the words out of the episode audio files for #1, then annotate the vowels for both #1 and #2.</p>
 <section id="setup" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">2.1</span> Setup</h3>
 <div id="imports" class="cell" data-execution_count="1">
@@ -3467,6 +3474,141 @@ vertical-align: -.125em;
 <dt data-target-cell="annotated-cell-1" data-target-annotation="5">5</dt>
 <dd>
 <span data-code-annotation="5" data-code-cell="annotated-cell-1" data-code-lines="8">Interface with Praat.</span>
+</dd>
+</dl>
+</div>
+</div>
+<p>Get video info from Lingthusiasm’s all episodes <a href="https://www.youtube.com/watch?v=xHNgepsuZ8c&amp;list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG">playlist</a>:</p>
+<div id="video-list" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>video_list <span class="op">=</span> Playlist(<span class="st">&#39;https://www.youtube.com/watch?v=xHNgepsuZ8c&amp;&#39;</span> <span class="op">+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&#39;list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Go through each video and download audio (if not already downloaded):</p>
+<div id="download-audio" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="annotated-cell-3"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><a href="#annotated-cell-3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_audio(videos):</span>
+<span id="annotated-cell-3-2"><a href="#annotated-cell-3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Download episode audio from Youtube.&quot;&quot;&quot;</span></span>
+<span id="annotated-cell-3-3"><a href="#annotated-cell-3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> url <span class="kw">in</span> videos:</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="1">1</button><span id="annotated-cell-3-4" class="code-annotation-target"><a href="#annotated-cell-3-4" aria-hidden="true" tabindex="-1"></a>        video <span class="op">=</span> YouTube(url)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="2">2</button><span id="annotated-cell-3-5" class="code-annotation-target"><a href="#annotated-cell-3-5" aria-hidden="true" tabindex="-1"></a>        video.bypass_age_gate()</span>
+<span id="annotated-cell-3-6"><a href="#annotated-cell-3-6" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="3">3</button><span id="annotated-cell-3-7" class="code-annotation-target"><a href="#annotated-cell-3-7" aria-hidden="true" tabindex="-1"></a>        title <span class="op">=</span> video.title</span>
+<span id="annotated-cell-3-8"><a href="#annotated-cell-3-8" aria-hidden="true" tabindex="-1"></a>        episode <span class="op">=</span> <span class="bu">int</span>(title[:<span class="dv">2</span>])</span>
+<span id="annotated-cell-3-9"><a href="#annotated-cell-3-9" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="4">4</button><span id="annotated-cell-3-10" class="code-annotation-target"><a href="#annotated-cell-3-10" aria-hidden="true" tabindex="-1"></a>        audio_file_name <span class="op">=</span> os.path.join(</span>
+<span id="annotated-cell-3-11"><a href="#annotated-cell-3-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;audio&#39;</span>, <span class="st">&#39;episodes&#39;</span>, <span class="ss">f&#39;</span><span class="sc">{</span>episode<span class="sc">}</span><span class="ss">.mp4&#39;</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-3" data-target-annotation="5">5</button><span id="annotated-cell-3-12" class="code-annotation-target"><a href="#annotated-cell-3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> os.path.isfile(audio_file_name):</span>
+<span id="annotated-cell-3-13"><a href="#annotated-cell-3-13" aria-hidden="true" tabindex="-1"></a>            audio_stream <span class="op">=</span> video.streams.get_audio_only()</span>
+<span id="annotated-cell-3-14"><a href="#annotated-cell-3-14" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&#39;downloading </span><span class="sc">{</span>episode<span class="sc">}</span><span class="ss">&#39;</span>)</span>
+<span id="annotated-cell-3-15"><a href="#annotated-cell-3-15" aria-hidden="true" tabindex="-1"></a>            audio_stream.download(filename<span class="op">=</span>audio_file_name)</span>
+<span id="annotated-cell-3-16"><a href="#annotated-cell-3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-3-17"><a href="#annotated-cell-3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-3-18"><a href="#annotated-cell-3-18" aria-hidden="true" tabindex="-1"></a>get_audio(video_list)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-3" data-code-lines="4">Go through the list of video URLs and open each one as a <code>YouTube</code> object.</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-3" data-code-lines="5">Need to include this to download data.</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="annotated-cell-3" data-code-lines="7,8">The video title is an attribute of the <code>YouTube</code> object, and the episode number is the first word of the title.</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="annotated-cell-3" data-code-lines="10">Create file name for episode audio.</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-annotation="5" data-code-cell="annotated-cell-3" data-code-lines="12,13,14,15">If file is not already downloaded, select and download the highest-quality audio-only stream.</span>
+</dd>
+</dl>
+</div>
+</div>
+</section>
+<section id="trim-audio-from-episodes" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="trim-audio-from-episodes"><span class="header-section-number">2.2</span> Trim Audio from Episodes</h3>
+<p>Open the <code>timestamps</code> data from Part 1:</p>
+<div id="open-timestamps" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="annotated-cell-4"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a>timestamps <span class="op">=</span> pd.read_csv( </span>
+<span id="annotated-cell-4-2"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;data/timestamps_annotate.csv&#39;</span>,</span>
+<span id="annotated-cell-4-3"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>    usecols<span class="op">=</span>[</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1">1</button><span id="annotated-cell-4-4" class="code-annotation-target"><a href="#annotated-cell-4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Vowel&#39;</span>, <span class="st">&#39;Word&#39;</span>, <span class="st">&#39;Speaker&#39;</span>, <span class="st">&#39;Number&#39;</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="2">2</button><span id="annotated-cell-4-5" class="code-annotation-target"><a href="#annotated-cell-4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Episode&#39;</span>, <span class="st">&#39;Start&#39;</span>, <span class="st">&#39;End&#39;</span></span>
+<span id="annotated-cell-4-6"><a href="#annotated-cell-4-6" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="3">3</button><span id="annotated-cell-4-7" class="code-annotation-target"><a href="#annotated-cell-4-7" aria-hidden="true" tabindex="-1"></a>    dtype<span class="op">=</span>{</span>
+<span id="annotated-cell-4-8"><a href="#annotated-cell-4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Vowel&#39;</span>: <span class="st">&#39;category&#39;</span>, <span class="st">&#39;Word&#39;</span>: <span class="st">&#39;category&#39;</span>, <span class="st">&#39;Speaker&#39;</span>: <span class="st">&#39;category&#39;</span>,</span>
+<span id="annotated-cell-4-9"><a href="#annotated-cell-4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Number&#39;</span>: <span class="st">&#39;category&#39;</span>, <span class="st">&#39;Episode&#39;</span>: <span class="st">&#39;category&#39;</span>,</span>
+<span id="annotated-cell-4-10"><a href="#annotated-cell-4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Start&#39;</span>: <span class="st">&#39;int&#39;</span>, <span class="st">&#39;End&#39;</span>: <span class="st">&#39;int&#39;</span></span>
+<span id="annotated-cell-4-11"><a href="#annotated-cell-4-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="annotated-cell-4-12"><a href="#annotated-cell-4-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="annotated-cell-4-13"><a href="#annotated-cell-4-13" aria-hidden="true" tabindex="-1"></a>timestamps[<span class="st">&#39;Speaker&#39;</span>] <span class="op">=</span> timestamps[<span class="st">&#39;Speaker&#39;</span>] <span class="op">\</span></span>
+<span id="annotated-cell-4-14"><a href="#annotated-cell-4-14" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="st">&#39;retchen&#39;</span>, <span class="st">&#39;&#39;</span>).<span class="bu">str</span>.replace(<span class="st">&#39;auren&#39;</span>, <span class="st">&#39;&#39;</span>) <span class="op">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="4">4</button><span id="annotated-cell-4-15" class="code-annotation-target"><a href="#annotated-cell-4-15" aria-hidden="true" tabindex="-1"></a>    .astype(<span class="st">&#39;category&#39;</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-4" data-code-lines="4">Keep columns specifying word variables.</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-4" data-code-lines="5">And keep columns specifying where audio is.</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="annotated-cell-4" data-code-lines="7,8,9,10,11">Make all columns categorical variables, except the <code>Start</code> and <code>End</code> times (integers).</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="annotated-cell-4" data-code-lines="15">Convert values in <code>Speaker</code> column from names to initials.</span>
+</dd>
+</dl>
+</div>
+</div>
+<p>Trim audio for the duration of the caption (with 250ms before and after). This results ~240 audio files each 2-10sec long, each containing a target word.</p>
+<div id="trim-audio" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="annotated-cell-5"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-5-1"><a href="#annotated-cell-5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trim_audio(df):</span>
+<span id="annotated-cell-5-2"><a href="#annotated-cell-5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Use caption timestamps to trim audio.&quot;&quot;&quot;</span></span>
+<span id="annotated-cell-5-3"><a href="#annotated-cell-5-3" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="1">1</button><span id="annotated-cell-5-4" class="code-annotation-target"><a href="#annotated-cell-5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> df.index:</span>
+<span id="annotated-cell-5-5"><a href="#annotated-cell-5-5" aria-hidden="true" tabindex="-1"></a>        episode <span class="op">=</span> df.loc[i, <span class="st">&#39;Episode&#39;</span>]</span>
+<span id="annotated-cell-5-6"><a href="#annotated-cell-5-6" aria-hidden="true" tabindex="-1"></a>        word <span class="op">=</span> df.loc[i, <span class="st">&#39;Word&#39;</span>]</span>
+<span id="annotated-cell-5-7"><a href="#annotated-cell-5-7" aria-hidden="true" tabindex="-1"></a>        speaker <span class="op">=</span> df.loc[i, <span class="st">&#39;Speaker&#39;</span>]</span>
+<span id="annotated-cell-5-8"><a href="#annotated-cell-5-8" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> df.loc[i, <span class="st">&#39;Number&#39;</span>]</span>
+<span id="annotated-cell-5-9"><a href="#annotated-cell-5-9" aria-hidden="true" tabindex="-1"></a></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="2">2</button><span id="annotated-cell-5-10" class="code-annotation-target"><a href="#annotated-cell-5-10" aria-hidden="true" tabindex="-1"></a>        out_file <span class="op">=</span>  os.path.join(</span>
+<span id="annotated-cell-5-11"><a href="#annotated-cell-5-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;audio&#39;</span>, <span class="st">&#39;words&#39;</span>, <span class="ss">f&#39;episode_</span><span class="sc">{</span>word<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>speaker<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>count<span class="sc">}</span><span class="ss">.wav&#39;</span>)</span>
+<span id="annotated-cell-5-12"><a href="#annotated-cell-5-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> os.path.isfile(out_file):</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="3">3</button><span id="annotated-cell-5-13" class="code-annotation-target"><a href="#annotated-cell-5-13" aria-hidden="true" tabindex="-1"></a>            in_file <span class="op">=</span> os.path.join(<span class="st">&#39;audio&#39;</span>, <span class="st">&#39;episodes&#39;</span>, <span class="ss">f&#39;</span><span class="sc">{</span>episode<span class="sc">}</span><span class="ss">.mp4&#39;</span>)</span>
+<span id="annotated-cell-5-14"><a href="#annotated-cell-5-14" aria-hidden="true" tabindex="-1"></a>            audio <span class="op">=</span> AudioSegment.from_file(in_file, <span class="bu">format</span><span class="op">=</span><span class="st">&#39;mp4&#39;</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="4">4</button><span id="annotated-cell-5-15" class="code-annotation-target"><a href="#annotated-cell-5-15" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="bu">max</span>(df.loc[i, <span class="st">&#39;Start&#39;</span>] <span class="op">-</span> <span class="dv">250</span>, <span class="dv">0</span>)</span>
+<span id="annotated-cell-5-16"><a href="#annotated-cell-5-16" aria-hidden="true" tabindex="-1"></a>            end <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(audio), df.loc[i, <span class="st">&#39;End&#39;</span>] <span class="op">+</span> <span class="dv">250</span>)</span>
+<span id="annotated-cell-5-17"><a href="#annotated-cell-5-17" aria-hidden="true" tabindex="-1"></a>            clip <span class="op">=</span> audio[start:end]</span>
+<span id="annotated-cell-5-18"><a href="#annotated-cell-5-18" aria-hidden="true" tabindex="-1"></a>            clip.export(out_f<span class="op">=</span>out_file, <span class="bu">format</span><span class="op">=</span><span class="st">&#39;wav&#39;</span>)</span>
+<span id="annotated-cell-5-19"><a href="#annotated-cell-5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-5-20"><a href="#annotated-cell-5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-5-21"><a href="#annotated-cell-5-21" aria-hidden="true" tabindex="-1"></a>trim_audio(timestamps)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-5" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-cell="annotated-cell-5" data-code-lines="4,5,6,7,8">Go through dataframe that has the example words to annotate and their timestamps.</span>
+</dd>
+<dt data-target-cell="annotated-cell-5" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-cell="annotated-cell-5" data-code-lines="10,12">Make file name for current word, and if it does not already exist…</span>
+</dd>
+<dt data-target-cell="annotated-cell-5" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-cell="annotated-cell-5" data-code-lines="13,14">Open the audio file for the whole episode.</span>
+</dd>
+<dt data-target-cell="annotated-cell-5" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-cell="annotated-cell-5" data-code-lines="15,16,17,18">Trim the episode audio to start 250 ms after the caption timestamp and end 250 after the caption timestamp; save it.</span>
 </dd>
 </dl>
 </div>

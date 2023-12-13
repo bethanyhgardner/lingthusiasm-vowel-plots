@@ -5,6 +5,15 @@ number-offset: [0, 2, 0]
 
 <br>
 
+There are two sets of data going into these vowel plots:
+
+1. Vowels pulled from the Lingthusiasm episode recordings, which were located in [Part 1](1_find_vowels.qmd)
+2. Vowels from Gretchen & Lauren recording the Wells lexical set for me
+
+The next steps are to trim the words out of the episode audio files for #1, then annotate the vowels for both #1 and #2.
+
+### Setup
+
 ```{python}
 #| label: imports
 
@@ -23,3 +32,105 @@ import parselmouth  # <5>
 3. Getting captions and audio data from YouTube.
 4. Working with audio files.
 5. Interface with Praat.
+
+Get video info from Lingthusiasm's all episodes [playlist](https://www.youtube.com/watch?v=xHNgepsuZ8c&list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG):
+
+```{python}
+#| label: video-list
+
+video_list = Playlist('https://www.youtube.com/watch?v=xHNgepsuZ8c&' +
+                      'list=PLcqOJ708UoXQ2wSZelLwkkHFwg424u8tG')
+```
+
+Go through each video and download audio (if not already downloaded):
+
+```{python}
+#| label: download-audio
+
+def get_audio(videos):
+    """Download episode audio from Youtube."""
+    for url in videos:
+        video = YouTube(url)  # <1>
+        video.bypass_age_gate()  # <2>
+
+        title = video.title  # <3>
+        episode = int(title[:2])  # <3>
+
+        audio_file_name = os.path.join(  # <4>
+            'audio', 'episodes', f'{episode}.mp4')
+        if not os.path.isfile(audio_file_name):  # <5>
+            audio_stream = video.streams.get_audio_only()  # <5>
+            print(f'downloading {episode}')  # <5>
+            audio_stream.download(filename=audio_file_name)  # <5>
+
+
+get_audio(video_list)
+```
+
+1. Go through the list of video URLs and open each one as a `YouTube` object.
+2. Need to include this to download data.
+3. The video title is an attribute of the `YouTube` object, and the episode number is the first word of the title.
+4. Create file name for episode audio.
+5. If file is not already downloaded, select and download the highest-quality audio-only stream.
+
+### Trim Audio from Episodes
+
+Open the `timestamps` data from Part 1:
+
+```{python}
+#| label: open-timestamps
+
+timestamps = pd.read_csv( 
+    'data/timestamps_annotate.csv',
+    usecols=[
+        'Vowel', 'Word', 'Speaker', 'Number',  # <1>
+        'Episode', 'Start', 'End'  # <2>
+    ],
+    dtype={  # <3>
+        'Vowel': 'category', 'Word': 'category', 'Speaker': 'category',  # <3>
+        'Number': 'category', 'Episode': 'category',  # <3>
+        'Start': 'int', 'End': 'int'  # <3>
+    }  # <3>
+)
+timestamps['Speaker'] = timestamps['Speaker'] \
+    .str.replace('retchen', '').str.replace('auren', '') \
+    .astype('category')  # <4>
+```
+
+1. Keep columns specifying word variables.
+2. And keep columns specifying where audio is.
+3. Make all columns categorical variables, except the `Start` and `End` times (integers).
+4. Convert values in `Speaker` column from names to initials.
+
+Trim audio for the duration of the caption (with 250ms before and after). This results ~240 audio files each 2-10sec long, each containing a target word.
+
+```{python}
+#| label: trim-audio
+
+def trim_audio(df):
+    """Use caption timestamps to trim audio."""
+
+    for i in df.index:  # <1>
+        episode = df.loc[i, 'Episode']  # <1>
+        word = df.loc[i, 'Word']  # <1>
+        speaker = df.loc[i, 'Speaker']  # <1>
+        count = df.loc[i, 'Number']  # <1>
+
+        out_file =  os.path.join(  # <2>
+            'audio', 'words', f'episode_{word}_{speaker}_{count}.wav')
+        if not os.path.isfile(out_file):  # <2>
+            in_file = os.path.join('audio', 'episodes', f'{episode}.mp4')  # <3>
+            audio = AudioSegment.from_file(in_file, format='mp4')  # <3>
+            start = max(df.loc[i, 'Start'] - 250, 0)  # <4>
+            end = min(len(audio), df.loc[i, 'End'] + 250)  # <4>
+            clip = audio[start:end]  # <4>
+            clip.export(out_f=out_file, format='wav')  # <4>
+
+
+trim_audio(timestamps)
+```
+
+1. Go through dataframe that has the example words to annotate and their timestamps.
+2. Make file name for current word, and if it does not already exist...
+3. Open the audio file for the whole episode.
+4. Trim the episode audio to start 250 ms after the caption timestamp and end 250 after the caption timestamp; save it.
