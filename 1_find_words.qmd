@@ -1,3 +1,10 @@
+---
+title: "Part 1: Finding Vowels to Plot"
+number-offset: [0, 1, 0]
+---
+
+<br>
+
 ```{python}
 #| label: imports
 

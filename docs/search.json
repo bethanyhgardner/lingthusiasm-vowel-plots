@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Lingthusiasm Vowel Plots",
+    "section": "",
+    "text": "Back to topCitationBibTeX citation:@online{gardner2023,\n  author = {Gardner, Bethany},\n  title = {Lingthusiasm {Vowel} {Plots}},\n  date = {2023-12-13},\n  url = {https://bethanyhgardner.github.io/lingthusiasm-vowel-plots},\n  langid = {en}\n}\nFor attribution, please cite this work as:\nGardner, Bethany. 2023. “Lingthusiasm Vowel Plots.”\nDecember 13, 2023. https://bethanyhgardner.github.io/lingthusiasm-vowel-plots."
+  },
+  {
+    "objectID": "2_annotate_audio.html",
+    "href": "2_annotate_audio.html",
+    "title": "Part 2: Annotating the Audio",
+    "section": "",
+    "text": "2.1 Setup\n\n\"\"\"Part 2 of Lingthusiasm Vowel Plots: Trimming Audio and Getting Vowel Formants.\"\"\"\n\n1import glob\nimport os\n2import pandas as pd\n3from pytube import Playlist, YouTube\n4from pydub import AudioSegment\n5import parselmouth\n\n\n1\n\nFile utilities.\n\n2\n\nDataframes.\n\n3\n\nGetting captions and audio data from YouTube.\n\n4\n\nWorking with audio files.\n\n5\n\nInterface with Praat.\n\n\n\n\n\n\n\n\n Back to topCitationBibTeX citation:@online{gardner2023,\n  author = {Gardner, Bethany},\n  title = {Lingthusiasm {Vowel} {Plots}},\n  date = {2023-12-13},\n  url = {https://bethanyhgardner.github.io/lingthusiasm-vowel-plots},\n  langid = {en}\n}\nFor attribution, please cite this work as:\nGardner, Bethany. 2023. “Lingthusiasm Vowel Plots.”\nDecember 13, 2023. https://bethanyhgardner.github.io/lingthusiasm-vowel-plots."
+  },
+  {
+    "objectID": "1_find_words.html",
+    "href": "1_find_words.html",
+    "title": "Part 1: Finding Vowels to Plot",
+    "section": "",
+    "text": "There are going to be two sources of data, one more naturalistic and one more controlled:\n\nVowels pulled from the Lingthusiasm episode recordings\nVowels from Gretchen & Lauren recording the Wells lexical set\n\nThe first steps are to find the words for #1, and we’ll come back to #2 later.\n\n1.1 Setup\n\n\"\"\"Part 1 of Lingthusiasm Vowel Plots: Finding Vowels to Annotate.\"\"\"\n\n1import re\n2import pandas as pd\n3import requests\nfrom bs4 import BeautifulSoup\n4from thefuzz import process\n5from pytube import Playlist, YouTube\n\n\n1\n\nRegex functions\n\n2\n\nDataframe functions\n\n3\n\nScraping data from webpages\n\n4\n\nFuzzy string matching\n\n5\n\nGetting captions and audio from YouTube\n\n\n\n\n(Note: All of this could also be done in R, but I’ve done it in Python here primarily because there are Python packages that can get data from YouTube without having to set up anything on the YouTube API side. Here, all you need to do is install the package.)\n\n\n\n\n Back to topCitationBibTeX citation:@online{gardner2023,\n  author = {Gardner, Bethany},\n  title = {Lingthusiasm {Vowel} {Plots}},\n  date = {2023-12-13},\n  url = {https://bethanyhgardner.github.io/lingthusiasm-vowel-plots},\n  langid = {en}\n}\nFor attribution, please cite this work as:\nGardner, Bethany. 2023. “Lingthusiasm Vowel Plots.”\nDecember 13, 2023. https://bethanyhgardner.github.io/lingthusiasm-vowel-plots."
+  },
+  {
+    "objectID": "3_plot_vowels.html",
+    "href": "3_plot_vowels.html",
+    "title": "Part 3: Plotting the Vowels",
+    "section": "",
+    "text": "3.1 Setup\n\n1library(tidyverse)\n2library(magrittr)\n3library(ggtext)\n4library(ggforce)\n5library(ggrepel)\n6library(rcartocolor)\n7library(png)\n8library(patchwork)\n\n9options(dplyr.summarise.inform = FALSE)\n\n\n1\n\nData wrangling (tidyr, dplyr, purrr, stringr), ggplot2 for plotting\n\n2\n\nPipe operator\n\n3\n\nMarkdown/HTML formatting for text in plots\n\n4\n\nEllipsis plots\n\n5\n\nOffset text labels from points\n\n6\n\nColor themes\n\n7\n\nOpen PNG images\n\n8\n\nAdd image to plot\n\n9\n\nDon’t print a message every time summarise() is called on a grouped dataframe.\n\n\n\n\n(Note: this could be done in Python, but I strongly prefer the ggplot package for plotting.)\n\n\n\n\n Back to topCitationBibTeX citation:@online{gardner2023,\n  author = {Gardner, Bethany},\n  title = {Lingthusiasm {Vowel} {Plots}},\n  date = {2023-12-13},\n  url = {https://bethanyhgardner.github.io/lingthusiasm-vowel-plots},\n  langid = {en}\n}\nFor attribution, please cite this work as:\nGardner, Bethany. 2023. “Lingthusiasm Vowel Plots.”\nDecember 13, 2023. https://bethanyhgardner.github.io/lingthusiasm-vowel-plots."
+  }
+]

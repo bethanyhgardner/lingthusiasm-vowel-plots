@@ -1,0 +1,66 @@
+# Metadata
+author: "Bethany Gardner"
+date: today
+citation:
+  type: webpage
+  title: "Lingthusiasm Vowel Plots"
+  url: https://bethanyhgardner.github.io/lingthusiasm-vowel-plots
+
+# Project/website configuration
+project:
+  title: "Lingthusiasm Vowel Plots"
+  type: website
+  output-dir: docs
+
+website:
+  back-to-top-navigation: true
+  navbar:
+    background: "#26b14c"  # lingthusiasm green
+    left:
+      - text: "Tutorial"
+        menu:
+          - 1_find_words.qmd
+          - 2_annotate_audio.qmd
+          - 3_plot_vowels.qmd
+      - text: "Episode"
+        menu:
+        - text: "Coming in March 2024!"
+          href: https://lingthusiasm.com/
+      - text: "Downloads"
+        href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/image-downloads
+    tools:
+      - icon: github
+        menu:
+        - text: "Source Code"
+          href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/
+        - text: "Ask a Question"
+          href: "https://github.com/bethanyhgardner/lingthusiasm-vowel-plots-workspace/issues"
+  search: false
+  page-navigation: true
+  repo-actions: source
+  repo-subdir: docs
+  repo-url: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots
+  site-url: https://bethanyhgardner.github.io/lingthusiasm-vowel-plots
+
+# Execution
+execute:
+  echo: true
+  freeze: true
+jupyter: python3
+self-contained: true
+
+# Formatting
+code-annotations: hover
+fig-align: left
+fig-dpi: 300
+highlight-style: atom-one
+link-external-newwindow: true
+number-sections: true
+page-layout: full  # more space for images since no sidebar
+theme:
+  - zephyr  # main theme is Bootswatch Zephyr
+  - resources/theme.css  # change primary color from blue to lingthusiasm green
+toc: true
+toc-depth: 4
+toc-expand: true
+toc-title: "Contents"

@@ -1,3 +1,10 @@
+---
+title: "Part 3: Plotting the Vowels"
+number-offset: [0, 3, 0]
+---
+
+<br>
+
 ```{r}
 #| label: imports
 #| message: false

@@ -1,1 +1,6 @@
+audio/words/*.wav
+audio/words/*.TextGrid
+audio/episodes/*.mp4
+_freeze/
 /env/
+/.quarto/

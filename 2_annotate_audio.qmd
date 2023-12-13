@@ -1,3 +1,10 @@
+---
+title: "Part 2: Annotating the Audio"
+number-offset: [0, 2, 0]
+---
+
+<br>
+
 ```{python}
 #| label: imports
 

@@ -1,0 +1,7 @@
+/*-- scss:defaults --*/
+$primary: #26b14c !default;  // change primary color from blue to lingthusiasm green
+
+/*-- scss:rules --*/
+h1 {
+	color: #26b14c;
+}
