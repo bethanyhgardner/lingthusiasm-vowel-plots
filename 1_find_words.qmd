@@ -5,6 +5,15 @@ number-offset: [0, 1, 0]
 
 <br>
 
+There are going to be two sources of data, one more naturalistic and one more controlled:
+
+1. Vowels pulled from the Lingthusiasm episode recordings
+2. Vowels from Gretchen & Lauren recording the [Wells lexical set](https://en.wikipedia.org/wiki/Lexical_set)
+
+The first steps are to find the words for #1, and we'll come back to #2 later.
+
+### Setup
+
 ```{python}
 #| label: imports
 
@@ -18,9 +27,227 @@ from thefuzz import process  # <4>
 from pytube import Playlist, YouTube  # <5>
 ```
 
-1. Regex functions
-2. Dataframe functions
-3. Scraping data from webpages
-4. Fuzzy string matching
-5. Getting captions and audio from YouTube
+1. Regex functions.
+2. Dataframe functions.
+3. Scraping data from webpages.
+4. Fuzzy string matching.
+5. Getting captions and audio from YouTube.
+
+(Note: All of this could also be done in R, but I've done it in Python here primarily because there are Python packages that can get data from YouTube without having to set up anything on the YouTube API side. Here, all you need to do is install the package.)
+
+### Get Transcript Text & Speakers
+
+#### List Episodes
+
+The Lingthusiasm website has a [page](https://lingthusiasm.com/transcripts) listing all of the available transcripts. Step 1 is to load that page and get the list of URLs to the transcripts. (They have similar but not identical structures, so it's easiest to read the list from the website instead of trying to construct them here.)
+
+This function uses the [BeautifulSoup package](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to return an HTML object and a text string for a URL:
+
+```{python}
+#| label: function-get-html-text
+
+def get_html_text(url):
+    """Use BeautifulSoup to get the webpage text from the URL."""
+
+    resp = requests.get(url, timeout=1000)  # <1>
+    html = BeautifulSoup(resp.text, 'html.parser')  # <2>
+
+    return {'html': html, 'text': html.get_text()}  # <3>
+```
+
+1. Connect to webpage.
+2. Load the HTML data from the webpage.
+3. Return the HTML data object and the text from the HTML data object.
+
+This function uses BeautifulSoup to filter just the transcript URLs from the HTML data:
+
+```{python}
+#| label: function-get-transcript-links
+
+def get_transcript_links(url):
+    """Get URLs to episode transcripts from HTML page."""
+
+    html = get_html_text(url)['html']  # <1>
+    url_objs = html.find_all('a')  #  <2>
+    urls = [l.get('href') for l in url_objs]  # <3>
+    urls = pd.Series(data=urls, name='URL', dtype='string')  # <4>
+    urls = urls[urls.str.contains('transcript')]  # <5>
+    urls = urls[::-1]  # <6>
+
+    return urls.reset_index(drop=True)  # <7>
+```
+
+1. Get HTML data from webpage using function defined above.
+2. Filter using the `a` tag to get all of the link items.
+3. Get the `href` item from each `a` tag item, which is the text of the URL.
+4. Convert from list to pandas series.
+5. Filter to only include URLs including the word `transcript`.
+6. Sort to have earliest episodes first.
+7. Return with index (row numbers) reset.
+
+There are 84 episodes available (as of early October 2023):
+
+```{python}
+#| label: get-links
+
+transcript_urls = get_transcript_links('https://lingthusiasm.com/transcripts')  # <1>
+
+transcript_urls.head().to_frame().style  # <2>
+```
+
+1. Get the URLs for the episode transcripts from the table of contents page, using the functions defined above.
+2. Take the first 10 rows of the resulting list and print it as a nice table.
+
+Only keep episodes 1-84, for consistency replicating this code later:
+
+```{python}
+#| label: subset-links
+
+transcript_urls = transcript_urls[:84]
+```
+
+#### Scrape Transcript Text
+
+Now we can download transcripts, which are split into turns and labelled by speaker.
+
+Splitting out some sub-tasks into separate methods, this function gets the episode number (following `episode-`) as an integer from the URL:
+
+```{python}
+#| label: function-transcript-number-from-url
+
+def transcript_number_from_url(url):
+    """Find transcript number in URL."""
+
+    index_episode = url.find('episode-')  # <1>
+    cur_number = url[index_episode + 8:]  # <2>
+    index_end = cur_number.find('-')  # <3>
+    if index_end != -1:
+        cur_number = cur_number[:index_end]
+
+    return int(cur_number)  # <4>
+```
+
+1. Find location of `episode-`, since episode number is immediately following it.
+2. Subset URL starting 8 characters after start of `episode-` string, which is immediately after it.
+3. Most of the transcript URLs have more text after the number. If so, trim to just keep the number.
+4. Return episode number converted from string to integer.
+
+The text returned from the transcript pages has information at the top and bottom that we don't need. `"This is a transcript for"` marks the start of the transcript, and `"This work is licensed under"` marks the end, so subset the transcript dataframe rows to only include that section:
+
+```{python}
+#| label: function-trim-transcript
+
+def trim_transcript(df):
+    """Find start and end of transcript text."""
+
+    start_index = df.find('This is a transcript for')
+    end_index = df.find('This work is licensed under')
+
+    return df[start_index:end_index]
+```
+
+This function cleans up the text column so it plays a bit nicer with Excel CSV export:
+
+```{python}
+#| label: function-clean-text-col
+
+def clean_text(l):
+    """Clean text column so it opens correctly as Excel CSV."""
+
+    l = l.strip()  # <1>
+    l = l.replace('\u00A0', ' ').replace('–', '--').replace('…', '...')  # <2>
+    l = re.sub('“|”|‘|’', "'", l)  # <3>
+
+    return ' '.join(l.split())  # <4>
+```
+
+1. Remove leading and trailing whitespaces.
+2. Replace non-breaking spaces, en dashes, and ellipses.
+3. Replace slanted quotes.
+4. Remove double spaces between words.
+
+After a bit of trial and error, it's easiest to split on the speaker names, since the paragraph formatting isn't identical across all the pages:
+
+```{python}
+#| label: speaker-names
+
+speaker_names = [
+    'Gretchen', 'Lauren', 'Ake', 'Bona', 'Ev', 'Fei Ting', 'Gabrielle',
+    'Jade', 'Hannah', 'Hilaria', 'Janelle', 'Kat', 'Kirby', 'Lina', 'Nicole',
+    'Pedro', 'Randall', 'Shivonne', 'Suzy'
+]
+speaker_regex = '(' + ':)|('.join(speaker_names) + ':)'  # <1>
+```
+
+1. Regex looks like `(Name1:)|(Name2:)` etc. Surrounding names in parentheses makes it a capture group, so the names are included in the list of split items instead of dropped.
+
+This function puts it all together to read the transcripts into one dataframe:
+
+```{python}
+#| label: function-parse-transcripts
+
+def get_transcripts(urls):
+    """Get transcript text from URLs and format into dataframe."""
+
+    df = []  # <1>
+    for l in urls:
+        cur_text = get_html_text(l)['text']  # <2>
+        cur_text = trim_transcript(cur_text)  # <3>
+        cur_lines = re.split(speaker_regex, cur_text)  # <4>
+        cur_lines = [l for l in cur_lines if l is not None]  # <5>
+        cur_lines = cur_lines[1:]  # <6>
+        speakers = cur_lines[::2]  # <7>
+        turns = cur_lines[1::2]  # <7>
+        cur_df = pd.DataFrame({  # <8>
+            'Episode': transcript_number_from_url(l),
+            'Speaker': speakers,
+            'Text': [clean_text(line) for line in turns],
+        })
+        cur_df['Speaker'] = cur_df['Speaker'].str.removesuffix(':')  # <8>
+        cur_df['Turn'] = cur_df.index + 1  # <9>
+        cur_df = cur_df.set_index(['Episode', 'Turn'], drop=True)  # <10>
+        df.append(cur_df)  # <11>
+
+    df = pd.concat(df)  # <12>
+    df['Speaker'] = df['Speaker'].astype('category')  # <13>
+    df['Text'] = df['Text'].astype('string')
+
+    return df
+```
+
+1. Make list to store results.
+2. Read text string (vs HTML object) from URL, using function defined above.
+3. Trim to only include transcript section, using function defined above.
+4. Split string into list with one item for each speaker turn, using regex defined above.
+5. Drop items in list that are `None` (which are included because of capture group syntax).
+6. Drop the initial "This is a transcript for..." line.
+7. Now all the odd items are speaker labels and even items are turn text. `[::2]` is every 2nd item starting at 0, and `[1::2]` is every 2nd item starting at 1.
+8. Clean up strings and put everything into a dataframe.
+9. Make column for turn number, which is index + 1.
+10. Set `Episode` and `Turn` columns as indices.
+11. Add to list of parsed episodes.
+12. Combine list of dataframes into one dataframe. This works because the `Episode` + `Turn` index combination is unique.
+13. Set datatypes explicitly, to avoid warnings later.
+
+This takes a minute or so to run:
+
+```{python}
+#| label: get-transcript-text
+
+transcripts = get_transcripts(transcript_urls)  # <1>
+
+pd.concat([transcripts.head(), transcripts.tail()]).style  # <2>
+```
+
+1. Run `get_transcripts()` on the lists of links to each transcript, defined above.
+2. Show the first and last 10 rows of the resulting dataframe. `.style` prints it as a nicer-looking table.
+
+Save results to `data/transcripts.csv`:
+
+```{python}
+#| label: save-transcripts
+
+transcripts.to_csv('data/transcripts.csv', index=True)
+```
+
 
