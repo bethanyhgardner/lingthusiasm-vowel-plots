@@ -560,3 +560,185 @@ Save results to `data/captions.csv`:
 
 captions.to_csv('data/captions.csv', index=False)
 ```
+
+### Match Timestamps to Transcripts
+
+Now match the text from the transcript (target word start -/+ 25 characters) to the caption timestamps, using the [thefuzz package](https://github.com/seatgeek/thefuzz) to find the closest match.
+
+```{python}
+#| label: function-match-transcript-times
+
+def match_transcript_times(df_trans, df_cap):
+    """Use fuzzy matching to match transcript turn to caption timestamp."""
+
+    df_times = df_trans.reset_index(drop=False)  # <1>
+    to_cat = ['Vowel', 'Word', 'Episode']  # <1>
+    df_times[to_cat] = df_times[to_cat].astype('category')  # <1>
+    df_times['Text_Caption'] = pd.Series(dtype='string')  # <2>
+
+    for i in df_times.index:
+        episode = df_times.loc[i, 'Episode']  # <3>
+        captions_subset = df_cap[df_cap['Episode'] == episode]  # <3>
+        text = df_times.loc[i, 'Text_Subset']  # <4>
+        text = match_exceptions(text, search_exceptions)  # <5>
+        if text is not None:  # <6>
+            match = process.extractOne(text, captions_subset['Text'])  # <6>
+            if match is not None:  # <7>
+                df_times.loc[i, 'Text_Caption'] = match[0]  # <7>
+                df_times.loc[i, 'Match_Rate'] = match[1]  # <7>
+                df_times.loc[i, 'Start'] = captions_subset.loc[match[2], 'Start']  # <8>
+                df_times.loc[i, 'End'] = captions_subset.loc[match[2], 'End']  # <9>
+
+    return df_times  # <10>
+```
+
+1. Make copy of the transcripts-containing-target-words dataframe, and convert `Vowel`, `Word`, and `Episode` from indices to columns, and specify those columns are categorical.
+2. Make column for results and specify it is a string type. Again, this will work without this line, but will result in warnings from pandas.
+3. Subset the captions dataframe to only include the episode of the current row, so we have less to search through.
+4. Text from transcript (target word -/+ 25 characters) to search for in captions.
+5. There are a few cases where the search text needs to be tweaked or subset to get the correct match, and a few cases where a token needs to be skipped because the audio quality wasn't good enough. These cases are defined in the next code chunk.
+6. Find row in caption dataframe (subset to just include the current episode) that best matches the search text (target word -/+ 25 characters).
+7. If a match is identified, a tuple is returned where the first item is the matching text, the second item is the certainty (where 100 is an exact match), and the third item is the row index (in the `Text` column of the captions dataframe, subset to just include the current episode).
+8. Use the row number from the match to get the corresponding `Start` and `End` times.
+9. Results include all of the target words found in the transcript, with columns added for `Text_Caption`, `Start`, and `End`.
+
+Fuzzy string matching accounts for a lot of the differences between the transcripts (which are proofread/edited) and the captions (not all proofread/edited, have some speaker names and initials mixed in). But it wasn't always able to account for the differences in splitting sections, since the captions aren't split by speaker turns. So, there are some where matching the right timestamp requires a transcript text that's subset further (`search_text_subsets`) or tweaked (`search_text_replacements`). This isn't the most elegant solution, but it works (and it was still faster than opening up 84 30-minute audio files to find and extract out 200 3-second clips).
+
+Then, after going through all the clips and annotating the vowels (see [Part 2](2_annotate_audio.qmd)), there are some that get skipped (`search_text_skips`) because of the audio quality (e.g., overlapping speech).
+
+```{python}
+#| label: function-match-exceptions
+
+search_exceptions = {
+    'replace': {  # <1>
+        "all to a sing": "all to a single place",
+        "and you have a whole room full":
+            "speakers who have a way of communicating with each other that",
+        "'bang' or something": "bang or something",
+        "emphasising the beat gestures in a very": "B gestures",
+        "by the foot and they really want":
+            "Yeah they rented the books by the foot and they really want",
+        "father's brother's wife": "father's brother's wife",
+        "foot/feet": "foot feet",
+        "is known as a": "repetition is known as a",
+        "an elastic thing with a ball on the end.":
+        "paddle thing that has an elastic thing with a ball on the end",
+        "pin things": "trying to use language names as a way to pin things",
+        "red, green, yellow, blue, brown, pink, purple":
+            "L: Black, white, red, green, yellow, blue, brown",
+        "see; red, green, yellow, blue, brown, purple, pink":
+            "green, yellow, blue, brown, purple, pink,",
+        "tied up with": "complicated or really difficult histories",
+        "to cite": "believe I got to",
+        "your father's brother, and you": "your father's brother",
+        "your father's brothers or your":
+            "your father's brothers or your mother's brothers"
+    },
+    'trim': [  # <2>
+        'a lot of very core', 'a more honorific one if you',
+        'an agreement among', 'audiobook', 'auditorily', 'ball of rocks',
+        'between those little balls', 'big yellow', 'bonus topics',
+        'bought a cot', 'bought! And it was true', 'bought some cheese',
+        'but let me finish', 'core idea', 'core metaphor',
+        'core set of imperatives', 'core thing', 'finished with their turn'
+        'finished yours', 'guest, Gabrielle', 'guest, Pedro',
+        'honorific register', 'how could this plan',
+        'imperative or this honorific', 'letter from her father',
+        'like if I bought', 'on which country you bought', 'pangrams', 
+        'pater -- father', 'returning special guest',
+        'see among languages are based', 'substitute',
+        'that did it with the Big Bang', 'the idea is that honorifics',
+        'wanna hear more from our guests', 'with your elbow or your foot',
+        'You bet', 'you tap your foot by the treat'
+    ],
+    'skip': [  # <3>
+        'believe you left this', 'bit of a rise', 'By the foot!',
+        'can pin down', 'existing thanks', 'featuring', 'fun and delightful',
+        'fun to flip', 'fun with adults', 'group of things', 'his data?',
+        'in November', 'local differences', 'people notice', 'She says no',
+        'situation where', 'things wrong', 'what letters', 'who are around you'
+    ]
+}
+
+def match_exceptions(text, exceptions):
+    """Check if text to match is an exception and gets replaced or subset."""
+
+    for k, v in exceptions['replace'].items():  # <4>
+        if k in text:
+            return v
+
+    for s in exceptions['trim']:  # <5>
+        if s in text:
+            return s
+
+    return None if any(text in s for s in exceptions['skip']) else text   # <6>
+```
+
+1. Cases where search text needs to be replaced to match correctly.
+2. Cases where search text needs to be subset to match correctly.
+3. Cases where search text needs to be skipped because of audio quality.
+4. If a `replace` key string is a substring of search text, then return key's value.
+5. If a `trim` string is a subset of search text, then return that string.
+6. If a `skip` string is a subset of search text, then return `None`. If none of exceptions apply, then return original search text.
+
+This takes a few minutes to run.
+
+```{python}
+#| label: match-transcript-to-timestamps-1
+
+timestamps = match_transcript_times(transcripts_subset, captions)  # <1>
+timestamps = timestamps[timestamps['Text_Caption'].notna()]  # <2>
+timestamps.to_csv('data/timestamps_all.csv', index=False)  # <3>
+```
+
+1. Get timestamps for selected turns (function defined in two code chunks above).
+2. Most ID a match, filter rows that don't.
+3. Save all results.
+
+Now select a subset to annotate. Pick the 5 highest matches (to caption timestamps from transcript) for each word + speaker, and if there are multiple good matches, pick the ones from the later episodes since those have higher sound quality.
+
+```{python}
+# | label: match-transcript-to-timestamps-2
+
+timestamps = timestamps \
+    .sort_values(['Match_Rate', 'Episode'], ascending=False) \
+    .groupby(['Vowel', 'Word', 'Speaker'], observed=True) \
+    .head(5) \
+    .sort_values(['Vowel', 'Word', 'Speaker']) \
+    .reset_index(drop=True)  # <1>
+
+timestamps['Number'] = timestamps \
+    .groupby(['Word', 'Speaker'], observed=True) \
+    .cumcount() + 1  # <2>
+
+timestamps = timestamps[[
+    'Vowel', 'Word', 'Speaker', 'Number', 'Episode', 'Turn',
+    'Text', 'Text_Subset', 'Text_Caption', 'Start', 'End'
+]]  # <3>
+```
+
+1. Sort with the highest match rates and later episodes at the top. Then group by `Vowel`, `Word`, and `Speaker`. Select the 5 highest within each `Vowel` + `Word` + `Speaker` group, which gets the closest matches, and if there are multiple good matches, picks the one from the later episode (higher audio quality). Then re-sort by `Vowel`, `Word`, and `Speaker` and convert those from indices to columns.
+2. Add new column for count within each `Word` + `Speaker` combination, which we'll use later to name files.
+3. Sort columns.
+
+We have 5 tokens of most words (except for the words where there weren't >= 5 tokens in the transcripts):
+
+```{python}
+#| label: count-tokens
+
+timestamps.value_counts(['Vowel', 'Word', 'Speaker'], sort=False) \
+    .reset_index() \
+    .style \
+    .hide()  # <1>
+```
+
+1. Count number of rows for each `Vowel` + `Word` + `Speaker` combination. Convert those from indices to columns, so this is a dataframe instead of a series, and thus can be printed as a table by making it a `style` object. `.hide()` drops the row numbers.
+
+Save results to `data/timestamps.csv`:
+
+```{python}
+#| label: save-timestamps
+
+timestamps.to_csv('data/timestamps_annotate.csv', index=False)
+```
+
