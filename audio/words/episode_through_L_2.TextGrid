@@ -1,0 +1,17 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0 
+xmax = 1.9989795918367348 
+tiers? <exists> 
+size = 1 
+item []: 
+    item [1]:
+        class = "TextTier" 
+        name = "vowel" 
+        xmin = 0 
+        xmax = 1.9989795918367348 
+        points: size = 1 
+        points [1]:
+            number = 0.604605149542697 
+            mark = "" 

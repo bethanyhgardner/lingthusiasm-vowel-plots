@@ -192,3 +192,19 @@ word_list.style.hide()  # <6>
 4. Fill the `NA` values of `List` with `episode`.
 5. Sort and reset index.
 6. Print, not including index.
+
+### An Interlude in Praat
+
+Now, we have about 400 audio clips of Gretchen and Lauren saying words that are good examples of each vowel. The vowel data that will actually be going into the plots is F1 and F2 [**todo: link to overview of formants**]. The easiest way to calculate the vowel formants is using Praat, a software designed for doing phonetic analysis.
+
+Here's an example of what that looked like:
+
+![Praat screenshot of Lauren saying "pit."](resources/praat_screenshot.png)
+
+The vowel [ɪ] is highlighted in pink, and you can see it's darker on the spectrogram than the consonants [k] and [t] before and after it. I placed an annotation (the blue lines) right in the middle of the vowel sound---this one is pretty easy, because Lauren was speaking slowly and without anyone overlapping, so the vowel sound is long and clear.
+The formants are the lines of red dots, and the popup window is the formant values at the vowel annotation time. We'll be using F1 (the bottom one) and F2 (the second from the bottom).
+
+You can download Praat and see the documentation [here](https://www.fon.hum.uva.nl/praat/). It's fairly old, so a con is that the interface isn't necessarily intuitive if you're used to modern programs, but a pro is that there are a ton of resources available for learning how to use it. [Here's a tutorial](https://aletheiacui.github.io/tutorials/segmentation_with_praat.html) about getting started with Praat, and [here's one](https://home.cc.umanitoba.ca/~krussll/phonetics/practice/praat.html) for recording your own audio and calculating the formants in it.
+
+After going through all of the audio clips, I had a .TextGrid file (Praat's annotation file format) for each audio clip that includes the timestamp for middle(ish) of the vowel. You can copy formant values manually out of Praat, or you can use Praat scripting to export them to a csv file (see [this  tutorial](https://joeystanley.com/blog/a-tutorial-on-extracting-formants-in-praat/), for example). But I prefer to go back to Python instead of wrangling Praat scripting code.
+
