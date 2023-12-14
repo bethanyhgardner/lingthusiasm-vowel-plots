@@ -7,7 +7,7 @@ number-offset: [0, 2, 0]
 
 There are two sets of data going into these vowel plots:
 
-1. Vowels pulled from the Lingthusiasm episode recordings, which were located in [Part 1](1_find_vowels.qmd)
+1. Vowels pulled from the Lingthusiasm episode recordings, which were located in [Part 1](1_find_words.qmd)
 2. Vowels from Gretchen & Lauren recording the Wells lexical set for me
 
 The next steps are to trim the words out of the episode audio files for #1, then annotate the vowels for both #1 and #2.
@@ -134,3 +134,61 @@ trim_audio(timestamps)
 2. Make file name for current word, and if it does not already exist...
 3. Open the audio file for the whole episode.
 4. Trim the episode audio to start 250 ms after the caption timestamp and end 250 after the caption timestamp; save it.
+
+### Wells Lexical Set
+
+The Wells lexical set is a set of examples for each vowel/diphthong, chosen to be maximally distinguishable and consistent. You can read more about it on [Wikipedia](https://en.wikipedia.org/wiki/Lexical_set#Standard_lexical_sets_for_English) and [John Wells' blog](https://phonetic-blog.blogspot.com/2010/02/lexical-sets.html). These recordings are going to be more controlled than the vowels pulled from the episode recordings and easier to annotate because they're spoken more slowly and carefully. This set contains some fairly low-frequency words, which is why there's not a lot of overlap with the words pulled from the episodes.
+
+[![The Wells lexical set](resources/wells_lexical_set.jpg)](http://2.bp.blogspot.com/_RSOXNV65lN0/S2a13vcLBAI/AAAAAAAAAYg/RQo2sbM7cqM/s1600-h/sets.jpg)
+
+```{python}
+#| label: list-wells-lexical-set
+
+wells_lexical_set = {  # <1>
+    '\u0069': 'fleece',   # i
+    '\u026A': ['kit', 'near'],  # ɪ
+    '\u025B': ['dress', 'square'],  # ɛ
+    '\u00E6': ['trap', 'bath'],  # æ
+    '\u006F': ['force', 'goat'], # o 
+    '\u0075': 'goose',  # u
+    '\u028A': ['cure', 'foot'],  # ʊ
+    '\u0254': ['cloth', 'north', 'thought'],  # ɔ
+    '\u0251': ['lot', 'palm', 'start'],  # ɑ
+    '\u028C': 'strut'  # ʌ
+}
+
+wells_lexical_set = pd.DataFrame.from_dict(wells_lexical_set, orient='index') \
+    .rename(columns={0: 'Word'}) \
+    .explode('Word') \
+    .reset_index(names='Vowel')  # <2>
+```
+
+1. Dictionary where keys are the IPA vowel unicode and values is word(s).
+2. Convert to dataframe with columns for `Vowel` and `Word`.
+
+Here's the full set of words for each vowel:
+
+```{python}
+#| label: all-words-list
+
+word_list = pd.concat([  # <1>
+    pd.DataFrame({  # <2>
+        'List': 'lexicalset',  # <2>
+        'Vowel': wells_lexical_set['Vowel'],  # <2> 
+        'Word': wells_lexical_set['Word']  # <2>
+    }),  # <2>
+    timestamps[['Vowel', 'Word']].drop_duplicates()  # <3>
+  ])
+word_list = word_list.fillna('episode')  # <4>
+word_list = word_list.sort_values(by = ['Vowel', 'Word'])  # <5>
+word_list = word_list.reset_index(drop = True)  # <5>
+
+word_list.style.hide()  # <6>
+```
+
+1. Combine word lists from episodes and Wells lexical set.
+2. Dataframe for Wells lexical set with columns for `List`, `Vowel`, and `Word`.
+3. Subset dataframe for episode word list, with columns for `Vowel` and `List`.
+4. Fill the `NA` values of `List` with `episode`.
+5. Sort and reset index.
+6. Print, not including index.
