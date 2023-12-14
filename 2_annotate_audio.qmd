@@ -201,10 +201,183 @@ Here's an example of what that looked like:
 
 ![Praat screenshot of Lauren saying "pit."](resources/praat_screenshot.png)
 
-The vowel [ɪ] is highlighted in pink, and you can see it's darker on the spectrogram than the consonants [k] and [t] before and after it. I placed an annotation (the blue lines) right in the middle of the vowel sound---this one is pretty easy, because Lauren was speaking slowly and without anyone overlapping, so the vowel sound is long and clear.
+The vowel [ɪ] is highlighted in pink, and you can see it's darker on the spectrogram than the consonants [k] and [t] before and after it. I placed an annotation (the blue lines, which Praat calls a "point tier") right in the middle of the vowel sound---this one is pretty easy, because Lauren was speaking slowly and without anyone overlapping, so the vowel sound is long and clear.
 The formants are the lines of red dots, and the popup window is the formant values at the vowel annotation time. We'll be using F1 (the bottom one) and F2 (the second from the bottom).
 
 You can download Praat and see the documentation [here](https://www.fon.hum.uva.nl/praat/). It's fairly old, so a con is that the interface isn't necessarily intuitive if you're used to modern programs, but a pro is that there are a ton of resources available for learning how to use it. [Here's a tutorial](https://aletheiacui.github.io/tutorials/segmentation_with_praat.html) about getting started with Praat, and [here's one](https://home.cc.umanitoba.ca/~krussll/phonetics/practice/praat.html) for recording your own audio and calculating the formants in it.
 
 After going through all of the audio clips, I had a .TextGrid file (Praat's annotation file format) for each audio clip that includes the timestamp for middle(ish) of the vowel. You can copy formant values manually out of Praat, or you can use Praat scripting to export them to a csv file (see [this  tutorial](https://joeystanley.com/blog/a-tutorial-on-extracting-formants-in-praat/), for example). But I prefer to go back to Python instead of wrangling Praat scripting code.
 
+### Read Annotation Data
+
+There are packages that read Praat TextGrid files, but I kept getting errors. Luckily, the textgrids for these annotations are simple text files, where we only need to extra one variable (the time of the point tier). These two functions do that:
+
+```{python}
+#| label: functions-textgrids-1
+
+def get_tier(text):
+    """Get annotation info from Praat TextGrid."""
+
+    tg = text.split('class = "TextTier"')[1]  # <1>
+    tg = tg.splitlines()[1:]  # <2>
+    tg = pd.Series(tg)  # <2>
+    tg = tg.str.partition('=')  # <3>
+    tg.drop(columns=1, inplace=True)  # <3>
+    tg.rename(columns={0: 'Name', 2: 'Value'}, inplace=True)  # <3>
+    tg['Name'] = tg['Name'].str.strip()  # <4>
+    tg['Value'] = tg['Value'].str.strip()  # <4>
+    tg.set_index('Name', inplace=True)  # <5>
+
+    return tg['Value'].to_dict()  # <5>
+
+
+def get_point_tier_time(t):
+    """Get time from TextGrid PointTier."""
+
+    tg = get_tier(t)  # <6>
+    time = tg['number']  # <7>
+    time = float(time)  # <8>
+
+    return round(time, 4)  # <8>
+```
+
+1. Section we need in TextGrid files start with this string.
+2. Split string by line breaks and convert to pandas series.
+3. Split into columns by `=` character, where the first column is the variable name, the second column is `=` (and gets dropped), and the third column is the variable value.
+4. Remove extra whitespace.
+5. Make `Name` into index, so the dataframe can be converted to a dictionary.
+6. Read TextGrid file using function defined immediately above.
+7. The variable we want (the timestamp for the PointTier annotation) is called `number`.
+8. Convert the time from character to numeric and round to 4 digits.
+
+
+These functions cycle through the list of TextGrid files, extract the point tier times, and put them into a dataframe with the rest of the information for each word:
+
+```{python}
+#| label: functions-textgrids-2
+
+def read_textgrid_times(file_list, word_list):
+    """Read textgrid files into dataframe."""
+
+    tg_times = []
+    for file_name in file_list:
+        with open(file_name, encoding='utf-8') as t_file:
+            t = t_file.read()
+            try:
+                tg = get_point_tier_time(t)  # <1>
+            except KeyError:
+                tg = None
+            tg_times.append(tg)
+
+    df = pd.DataFrame({'File': file_list, 'Vowel_Time': tg_times})  # <2>
+    df['File'] = df['File'].str.rpartition('\\')[2]  # <3>
+    df['File'] = df['File'].str.removesuffix('.TextGrid')  # <3>
+
+    return textgrid_vars(df, word_list)  # <4>
+
+
+def textgrid_vars(df, word_list):
+    """Format df of vowel timestamps."""
+
+    df['List'] = df['File'].str.split('_', expand=True)[0]  # <5>
+    df['Word'] = df['File'].str.split('_', expand=True)[1]  # <5>
+    df['Speaker'] = df['File'].str.split('_', expand=True)[2]  # <5>
+    df['Count'] = df['File'].str.split('_', expand=True)[3]  # <5>
+
+    df = pd.merge(df, word_list, how='left', on=['Word', 'List'])  # <6>
+
+    return df[['List', 'Vowel', 'Word', 'Speaker', 'Count', 'Vowel_Time']]  # <7>
+```
+
+1. Try to get timestamp from PointTier annotation for each TextGrid file, using function defined in previous code chunk.
+2. Put results into a dataframe.
+3. Remove the path prefix and type suffix from the file names, leaving just the `word_speaker_number` format.
+4. Get other variables from `File`, using function defined immediately below.
+5. When `File` is split by `_`, `List` (`episode` or `lexicalset`) is the first item, `Word` is the second item, `Speaker` (`G` or `L`) is the third item, and `Count` is the fourth item in the resulting list.
+6. Merge with the word list dataframe to add a column for `Vowel` by matching on `Word`.
+7. Organize.
+
+Make list of TextGrid files and read PointTier times:
+
+```{python}
+#| label: read-textgrid-times
+
+tg_list = glob.glob(os.path.join('audio', 'words', '*.TextGrid'))  # <1>
+formants = read_textgrid_times(tg_list, word_list)  # <2>
+
+pd.concat([formants.head(), formants.tail()]).style.hide()  # <3>
+```
+
+1. Get a list of all `.TextGrid` files in the `audio/words/` directory.
+2. Get the data from each TextGrid file, using functions defined in previous two code chunks.
+3. Get the first and last 10 rows, then display as a table, not including row numbers.
+
+### Calculate Formants
+
+It's possible to export the formants from Praat, but I think it's easier to use the [parselmouth package](https://parselmouth.readthedocs.io/en/stable/index.html) here, which runs Praat from Python.
+
+```{python}
+#| label: function-calculate-formants
+
+def get_formants(df):
+    """Get F1 and F2 at specified time."""
+
+    for i in df.index:
+        file = os.path.join(  # <1>
+            'audio', 'words',  # <1>
+            (df.loc[i, 'List'] + '_' + df.loc[i, 'Word'] + '_' +  # <1>
+            df.loc[i, 'Speaker'] + '_' + df.loc[i, 'Count'] + '.wav')  # <1>
+        )
+        audio = parselmouth.Sound(file)  # <2>
+        formants = audio.to_formant_burg(  # <3>
+            time_step=0.01, max_number_of_formants=5  # <3>
+        )  # <3>
+        if 'fleece_L_2' in file:  # <4>
+            formants = audio.to_formant_burg(  # <4>
+                time_step=0.01, max_number_of_formants=4  # <4>
+            )  # <4>
+        vowel_time = df.loc[i, 'Vowel_Time']  # <5>
+        df.loc[i, 'F1'] = formants.get_value_at_time(1, vowel_time)  # <6>
+        df.loc[i, 'F2'] = formants.get_value_at_time(2, vowel_time)  # <6>
+
+    return df
+```
+
+1. Reconstruct the current audio file name from `Word` + `Speaker` + `Count` variables.
+2. Use the parselmouth package to open the audio file.
+3. Call Praat via parselmouth and calculate the formants. These are the default settings: every 0.010 seconds, up to 5 formants.
+4. Because of artefacts in the recording, this file needs a limit of 4 formants to identify them correctly.
+5. Get the timestamp of the vowel for the current audio file.
+6. Get F1 and F2 at the specified time from the parselmouth formant object.
+
+Calculate the formants and summarize the results:
+
+```{python}
+#| label: calculate-formants
+
+formants = get_formants(formants)  # <1>
+
+pd.concat([formants.head(), formants.tail()]).style.hide()  # <2>
+```
+
+1. Calculate vowel formants for each word, using function defined in previous code chunk.
+2. Get the first and last 10 rows, then display as a table, not including row numbers.
+
+```{python}
+#| label: formant-summary
+
+formants.groupby(['Vowel', 'Speaker']) \
+    .agg({'F1': ['min', 'mean', 'max'], 'F2': ['min', 'mean', 'max']}) \
+    .style \
+    .format(precision=0)  # <1>
+```
+
+1. Group the data by `Vowel` and `Speaker`, then calculate the min, mean, and max of `F1` and `F2` for each `Vowel` + `Speaker` combination. Print the results as a table, with values rounded to whole numbers.
+
+Save results as `data/formants.csv`:
+
+```{python}
+#| label: save-formant-results
+
+formants.to_csv('data/formants.csv', index=False)
+```
