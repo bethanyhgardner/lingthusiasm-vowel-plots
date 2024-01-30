@@ -2,3 +2,10 @@ audio/episodes/*.mp4
 _freeze/
 /env/
 /.quarto/
+.Rproj.user
+.Rprofile
+.Rhistory
+.RData
+renv/activate.R
+renv/settings.json
+lingthusiasm.Rproj
