@@ -650,6 +650,57 @@ words_ep_2
 
 This was one of the points where I (from the northeast US) realized how I don't have a lot of experience with Australian accents, because I wasn't entirely sure how much of the messiness in Lauren's back vowel data was because her back vowels are in different locations, or because I picked words where she uses a different vowel than Gretchen and I do.
 
+### Plot Vowel Boundaries
+
+One of the the most common types of vowel plots draws ellipses around the vowel boundaries.
+
+```{r}
+#| label: fig-ellipses
+#| fig-cap: "Vowel means (labels) and boundaries (ellipses)."
+
+ellipses <- formants %>%
+  ggplot(aes(x = F2, y = F1, group = Vowel)) +  # <1>
+  geom_mark_ellipse(  # <2>
+    aes(color = Vowel),  # <3>
+    expand = 0  # <4>
+  ) +
+  geom_textbox(  # <5>
+    data = . %>%  # <6>
+      summarise(.by = c(Speaker, List, Vowel), F1 = mean(F1), F2 = mean(F2)),  # <6>
+    aes(label = Vowel, fill = Vowel), # <7>
+    color = lingthusiasm_navy, size = 4.5, halign = 0.5, valign = 0.5,  # <8>
+    alpha = 0.8, box.color = NA,  # <9>
+    width = unit(0.10, "snpc"), height = unit(0.10, "snpc"),  # <10>
+    box.padding = unit(c(0, 0, 0, 0), "snpc"), box.r = unit(0.01, "snpc")  # <10>
+  ) +
+  facet_grid(Speaker ~ List) +
+  scale_color_manual(values = carto_pal(12, "Bold")) +
+  scale_fill_manual(values = carto_pal(12, "Bold")) +
+  scale_x_reverse(breaks = c(750, 1250, 1750, 2250, 2750)) +
+  scale_y_reverse(breaks = c(250, 500, 750, 1000)) +
+  theme_classic() +
+  lingthusiasm_theme +
+  labs(title = "Vowel Boundaries") +
+  guides(color = guide_none(), fill = guide_none())
+
+ellipses
+```
+
+1.  Specify `group = Vowel` because all layers are going to be grouped by vowel, but wait to specify `fill` and `color` because those will vary by geom.
+2.  `ggforce::geom_mark_ellipse()` draws an ellipse around the points in each `Vowel` group. `stat_ellipse()` is also an option, but not all the vowels in the Wells Lexical Set have enough observations for it.
+3.    Set the outline around the ellipse to be color-coded by `Vowel`, but keep the fill of the ellipses white.
+4.  `expand = 0` draws the ellipse exactly around the edges of the data, vs. the default value of expanding the ellipse out by 5mm.
+5.  If you give `geom_mark_ellipse()` a value for `label`, it will draw labels for each ellipse. But I want the labels centered on the mean for each vowel, not drawn to the side, so to do that I'm using `geom_textbox()` again (like for the first vowel means plots).
+6.  `geom_textbox()` needs the means for each `Speaker`\*`List`\*`Vowel`, otherwise it will draw a label over every data point. We can summarize the data already passed into the plot (`formats`) by specifying `data = . %>% summarise()`. So this geom (but not the ellipse geom) uses the mean of `F1` and `F2` grouped by `Speaker`, `List`, and `Vowel`. If you only specified `Vowel` here, it would plot the same means on each panel when we `facet_wrap()` by `Speaker` and `Vowel` on the next line.
+7.  Set the `label` and `fill` (but not `color`) to vary by `Vowel` for just `geom_textbox()`.
+8.  Set the text size, alignment, and color.
+9.  Remove the outlines around the boxes and make the fill color slightly transparent.
+10.  Set the box dimensions (see vowel means plots above).
+
+Ellipse plots are hard to make work for this data set, since there's just too much going on in the Lingthusiasm Episode data. It would work better with cleaner/more controlled data (like the Wells Lexical Set recordings), or if you weren't trying to compare all of the vowels. For now, I think this just shows how complex speech comprehension is! There isn't a straightforward way to visualize boundaries in the naturalistic data, even though we're able to *perceive* boundaries without much trouble.
+
+For more info on ellipse vowel plots and how to tweak their appearance, I like [this tutorial](https://lingmethodshub.github.io/content/R/vowel-plots-tutorial/).
+
 
 Save the plots: 
 
@@ -675,6 +726,10 @@ ggsave(
 ggsave(
   words_ep_2, path = "plots", filename = "4_words_episodes.png",
   width = 8, height = 8, unit = "in", device = png
+)
+ggsave(
+  ellipses, path = "plots", filename = "5_ellipses.png",
+  width = 8, height = 5, unit = "in", device = png
 )
 ```
 
