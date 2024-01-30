@@ -5,6 +5,10 @@ number-offset: [0, 3, 0]
 
 <br>
 
+Now to actually make the vowel plots! This document goes into detail about how I decided to make them the way I did and how to implement them in ggplot, but if you just want to see the final results, jump down to [here](#results).
+
+### Setup
+
 ```{r}
 #| label: imports
 #| message: false
@@ -17,13 +21,204 @@ library(ggrepel)      # <5>
 library(rcartocolor)  # <6>
 library(png)          # <7>
 library(patchwork)    # <8>
+
+options(dplyr.summarise.inform = FALSE)  # <9>
 ```
 
-1.  Data wrangling (`tidyr`, `dplyr`, `purrr`, `stringr`), `ggplot2` for plotting
-2.  Pipe operator
-3.  Markdown/HTML formatting for text in plots
-4.  Ellipsis plots
-5.  Offset text labels from points
-6.  Color themes
-7.  Open PNG images
-8.  Add image to plot
+1.  Data wrangling (`tidyr`, `dplyr`, `purrr`, `stringr`), `ggplot2` for plotting.
+2.  Pipe operator.
+3.  Markdown/HTML formatting for text in plots.
+4.  Ellipsis plots.
+5.  Offset text labels from points.
+6.  Color themes.
+7.  Open PNG images.
+8.  Add images on top of plots.
+9.  Don't print a message every time `summarise()` is called on a grouped dataframe.
+
+(Note: this could be done in Python, but I strongly prefer the [ggplot package](https://ggplot2.tidyverse.org/) for plotting.)
+
+#### Data {.unnumbered}
+
+Load the vowel formant data from [Part 2](2_annotate_audio.qmd):
+
+```{r}
+#| label: load-formants
+
+formants <- read.csv("data/formants.csv", stringsAsFactors = TRUE) %>%  # <1>
+  select(-Vowel_Time, -Count) %>%  # <1>
+  mutate(  # <2>
+    Speaker = ifelse(Speaker == "G", "Gretchen", "Lauren"),  # <2>
+    List = ifelse(
+      List == "episode", "Lingthusiasm Episodes", "Wells Lexical Set"
+    )  # <2>
+  ) %>%  # <2>
+  mutate(across(where(is.character), as.factor))  # <2>
+
+str(formants)
+```
+
+1.  Read formants data from `2_annotate_audio.qmd`, and keep columns for `List`, `Vowel`, `Word`, `Speaker`, `F1`, and `F2`.
+2.  Recode the values for `Speaker` and `List` from abbreviations to full strings for plot labels, then make them both factors.
+
+#### IPA Symbols {.unnumbered}
+
+However, the IPA symbols aren't encoded correctly. They'll render in RStudio, but not when Quarto renders the document to HTML, or always when ggplot renders the plots. This isn't what we want:
+
+> `r formants$Vowel %>% as.factor() %>% levels()`
+
+So, the next step is to enter the unicode values manually (copied from this [Wikipedia page](https://en.wikipedia.org/wiki/Phonetic_symbols_in_Unicode#Vowels)):
+
+```{r}
+#| label: ipa-vowels
+
+vowels <- c(
+  "i_lower"   = "\u0069",  # i (close front unrounded)
+  "i_upper"   = "\u026A",  # ɪ (near-close front unrounded)
+  "epsilon"   = "\u025B",  # ɛ (open-mid front unrounded)
+  "ash"       = "\u00E6",  # æ (near-open front unrounded)
+  "schwa"     = "\u0259",  # ə (mid central)
+  "horseshoe" = "\u028A",  # ʊ (near-close near-back rounded)
+  "u"         = "\u0075",  # u (close back rounded)
+  "o"         = "\u006F",  # o (close-mid back rounded)
+  "hat"       = "\u028C",  # ʌ (open-mid back unrounded)
+  "open_o"    = "\u0254",  # ɔ (open-mid back rounded)
+  "alpha"     = "\u0251"   # ɑ (open back unrounded)
+)
+```
+
+These are ordered from front to back, then close to open (@fig-ipa).
+
+Then match the unicode for the IPA symbol to the words:
+
+```{r}
+#| label: fix-vowel-symbols
+
+formants %<>% mutate(
+  Vowel = case_when(  # <1>
+    Word %in% c("ball", "father", "honorific", "lot", "palm", "start") ~ vowels["alpha"],
+    Word %in% c("bang", "bath", "hand", "laugh", "trap") ~ vowels["ash"],
+    Word %in% c("bought", "cloth", "core", "north", "thought", "wrong") ~ vowels["open_o"],
+    Word %in% c("among", "famous", "support") ~ vowels["schwa"],
+    Word %in% c("bet", "dress", "guest", "says", "square") ~ vowels["epsilon"],
+    Word %in% c("beat", "believe", "fleece", "people") ~ vowels["i_lower"],
+    Word %in% c("bit", "finish", "kit", "near", "pin") ~ vowels["i_upper"],
+    Word %in% c("force", "goat") ~ vowels["o"],
+    Word %in% c("blue", "goose", "through", "who") ~ vowels["u"],
+    Word %in% c("could", "cure", "put", "foot") ~ vowels["horseshoe"],
+    Word %in% c("another", "but", "fun", "strut") ~ vowels["hat"],
+  ) %>% factor(levels = vowels, ordered = TRUE)  # <2>
+)
+
+str(formants)
+```
+
+1.  If the value in the `Word` column is `ball`, `father`, `honorific`, `lot`, or `palm`, then assign the `alpha` value from the `vowels` list.
+2.  Convert character to factor, then specify the order of the factors (same as in `vowels` list above) to make sure it stays consistent.
+
+Now the IPA vowels consistently render correctly: 
+
+> `r levels(formants$Vowel)`
+
+#### Lingthusiasm Theme {.unnumbered}
+
+The Lingthusiasm font is `Josefin Sans`, which is available from [Google Fonts](https://fonts.google.com/specimen/Josefin+Sans/glyphs).
+
+I downloaded and installed it to my computer. There are a number of different ways to add new fonts without having to install them separately outside of RStudio, such as `font_add_google()` from the [showtext package](https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html). However, that method was causing errors rendering the IPA symbols.
+
+`systemfonts()` shows the list of fonts installed on my computer that R recognizes, and it finds Josefin Sans:
+
+```{r}
+#| label: load-fonts-1
+
+systemfonts::system_fonts() %>%  # <1>
+  filter(str_detect(family, "Josefin Sans")) %>%  # <2>
+  select(path, name, family) %>%  # <3>
+  pivot_longer(cols = everything())  # <3>
+```
+
+1.  Get dataframe of fonts available.
+2.  Filter to include `Josefin Sans`.
+3.  Select columns to print; flip to list vertically.
+
+However, the fonts loaded by default just include Times New Roman, Arial, and Courier New:
+
+```{r}
+#| label: load-fonts-2
+
+windowsFonts()
+```
+
+This tells R to load Josefin Sans into the set of available fonts, so text will render in Josefin Sans if `family = sans_alt`, but stick with the default sans font otherwise (and not break the IPA symbols).
+
+```{r}
+#| label: load-fonts-3
+
+windowsFonts(sans_alt = "Josefin Sans")
+windowsFonts()
+```
+
+The hex codes for the green and navy are:
+
+```{r}
+#| label: lingthusiasm-colors
+
+lingthusiasm_green = "#26b14c"
+lingthusiasm_navy = "#051458"
+```
+
+And the logo:
+
+```{r}
+#| label: lingthusiasm-logo
+
+lingthusiasm_logo <- readPNG("resources/lingthusiasm_logo_circle.png",  native = TRUE)  # <1>
+lingthusiasm_tagline <- readPNG("resources/lingthusiasm_logo_tagline.png",  native = TRUE)  # <1>
+```
+
+1.  Read logo images. `native = TRUE` specifies reading it as a raster object instead of an array, which is the format `patchwork::inset_element()` needs.
+
+Putting it together:
+
+```{r}
+#| label: fig-lingthusiasm-theme
+#| fig-cap: Lingthusiasm colors, font, and logo.
+#| fig-asp: 1
+
+tibble(
+  "Color" = c("green", "navy"),  # <1>
+  "Hex" = c(lingthusiasm_green, lingthusiasm_navy),  # <2>
+  "Extra_Col" = c(1, 1)  # <3>
+) %>%
+  ggplot(aes(x = Color, y = Extra_Col, fill = Hex, label = Hex)) +  # <4>
+  geom_tile() +  # <5>
+  geom_text(size = 10, color = "white") +  # <6>
+  scale_fill_identity() +  # <7>
+  theme_classic() +
+  labs(title = "Lingthusiasm Theme") +  # <8>
+  theme(
+    plot.title = element_text(  # <8>
+      family = "sans_alt", size = 28,  # <8>
+      margin = margin(t = 1, b = 1, unit = "lines"), hjust = 0.55,  # <8>
+      color = lingthusiasm_navy  # <8>
+    ),  
+    axis.text = element_blank(), axis.title = element_blank(),  # <9>
+    axis.line = element_blank(), axis.ticks = element_blank()   # <9>
+  ) +
+  inset_element(  # <10>
+    p = lingthusiasm_logo,  # <10>
+    left = unit(0.05, "snpc"), right = unit(0.25, "snpc"),  # <11>
+    top = unit(1.2, "snpc"), bottom = unit(1, "snpc")  # <11>
+  )
+```
+
+1.  `Color` is names of the two lingthusiasm theme colors.
+2.  `Hex` is the two hex codes.
+3.  `Extra_Col` is a dummy value because ggplot needs a Y axis.
+4.  The X axis is `Color`, and the Y axis is `Extra_Col`, which just creates two boxes next to each other. Fill and label are specified by `Hex`.
+5.  Draw a square for each color.
+6.  Label the squares with the hex code strings (keeping the default font).
+7.  Fill the squares with the hex code color values.
+8.  Set the plot title text to be navy, Josefin Sans, size 28, centered with some space above and below.
+9.  Remove the axis lines, labels, titles, and ticks.
+10. Use the `patchwork` package to add the logo image on top of the plot. This step needs to be last.
+11. Specify the positions for each corner of the logo, using `spnc` units so it stays square even if the overall plot is rectangular.
