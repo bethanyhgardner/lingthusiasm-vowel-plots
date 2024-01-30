@@ -376,6 +376,280 @@ points
 6.  Add the color-coded list of vowels as a subtitle.
 7.  Turn the default legend off.
 
+### Plot Word Means
+
+The data for each vowel consists of 3 different words. How different are they?  First, let's look at the Wells Lexical Set.
+
+These next plots use the [ggrepel package](https://ggrepel.slowkow.com/) to make the word labels not overlap with each other or with the scatterplot points.
+
+```{r}
+#| label: fig-by-word-ls
+#| fig-cap: "Mean for each word in the Wells Lexical Set word list."
+#| fig-asp: 0.6
+
+words_ls <- formants %>%  # <1>
+  filter(List == "Wells Lexical Set") %>%  # <1>
+  group_by(Speaker, Vowel, Word) %>%  # <2>
+  summarise(F1 = mean(F1), F2 = mean(F2)) %>%  # <2>
+  ggplot(aes(x = F2, y = F1, color = Vowel, label = Word)) +  # <3>
+  geom_point(size = 1.25) +  # <4>
+  geom_label_repel(  # <5>
+    min.segment.length = 0,  # <6>
+    size = 4,  # <7>
+    force = 75,  # <8>
+    family = "sans_alt",  # <9>
+    seed = 2024  # <10>
+  ) +
+  facet_wrap(~Speaker) +  # <11>
+  scale_color_manual(values = carto_pal(12, "Bold")) +
+  scale_x_reverse(breaks = c(750, 1250, 1750, 2250, 2750)) +  # <12>
+  scale_y_reverse(breaks = c(250, 500, 750, 1000)) +  # <12>
+  theme_classic() +
+  lingthusiasm_theme +
+  theme(plot.subtitle = element_markdown(size = 15, family = "sans")) +
+  labs(title = "Means By Word: Wells Lexical Set", subtitle = vowel_key) +  # <13>
+  guides(color = guide_none())  # <13>
+
+words_ls
+```
+
+1. Only include `Wells Lexical Set` word list.
+2.  The data for this plot is the means by `Speaker`, `Vowel`, AND `Word`.
+3.  All layers of this plot have `F2` on the X axis, `F1` on the Y axis, are color-coded by `Vowel`, and are labelled by `Vowel`.
+4.  Draw a point at each `Speaker`\*`Vowel`\*`Word` mean (slightly bigger than default).
+5.  Draw text box labels offset from each point. `geom_label_repel()` makes sure none of the boxes overlap with the points or with each other.
+6.  Always draw a line from the text box to the scatterplot point,
+7.  Text size. Note this is on a different scale than the text for the title/axis labels.
+8.  Increase the amount of space required between the text boxes.
+9.  Make font Josefin sans.
+10. Set a seed so the results are consistent.
+11. Put Gretchen on the left and Lauren on the right.
+12. Specify limits and locations of labels/breaks, since the defaults aren't even.
+13. Include color-coded vowel string as a subtitle, instead of the default legend for color.
+
+Now let's look at the Lingthusiasm episode words:
+
+```{r}
+#| label: fig-by-word-ep-1
+#| fig-cap: "Mean for each word in the Lingthusiasm Episode word list."
+#| fig-asp: 1.25
+
+words_ep_1 <- formants %>%  # <1>
+  filter(List == "Lingthusiasm Episodes") %>%  # <1>
+  group_by(Speaker, Vowel, Word) %>%
+  summarise(F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1, color = Vowel, label = Word)) +
+  geom_point(size = 1.25) +
+  geom_label_repel(
+    min.segment.length = 0, force = 75, seed = 2024,
+    size = 4, family = "sans_alt"
+  ) +
+  facet_wrap(~Speaker, ncol = 1) +  # <2>
+  scale_color_manual(values = carto_pal(12, "Bold")) +
+  scale_x_reverse(breaks = c(750, 1250, 1750, 2250, 2750)) +
+  scale_y_reverse(breaks = c(250, 500, 750, 1000)) +
+  theme_classic() +
+  lingthusiasm_theme +
+  theme(plot.subtitle = element_markdown(size = 15, family = "sans")) +
+  labs(title = "Means By Word: Lingthusiasm Episodes", subtitle = vowel_key) +
+  guides(color = guide_none())  # <12>
+
+words_ep_1
+```
+
+1.  Only include `Lingthusiasm Episode` word list.
+2.  The panels are stacked vertically, because the word labels take up more space. `fig-asp: 1.25` in this code chunk's header makes it render tall enough.
+
+One thing that makes this plot a bit hard to interpret is that it's not immediately clear which vowel in the word is the one being plotted. So, let's make the vowel bold relative to the rest of the word.
+
+So far we've been using `ggtext` to format text, but that doesn't work with `ggrepel`. The workaround, like with the IPA vowels, is to just enter the unicode characters directly.
+
+These are the codes for the [Mathematical Sans Serif](https://www.compart.com/en/unicode/search?q=Mathematical+Sans-Serif+#characters) capital letters, in regular and bold faces. They're copy-pasted in here manually even though the pattern is predictable, because procedurally generating strings with the `\u` prefix is a pain.
+
+```{r}
+#| label: alphabet-unicode
+
+alphabet_reg <- c(
+  "\U1D5A0", "\U1D5A1", "\U1D5A2", "\U1D5A3", "\U1D5A4", "\U1D5A5",
+  "\U1D5A6", "\U1D5A7", "\U1D5A8", "\U1D5A9", "\U1D5AA", "\U1D5AB",
+  "\U1D5AC", "\U1D5AD", "\U1D5AE", "\U1D5AF", "\U1D5B0", "\U1D5B1",
+  "\U1D5B2", "\U1D5B3", "\U1D5B4", "\U1D5B5", "\U1D5B6", "\U1D5B7",
+  "\U1D5B8", "\U1D5B9"
+)
+
+alphabet_bold <- c(
+  "\U1D5D4", "\U1D5D5", "\U1D5D6", "\U1D5D7", "\U1D5D8", "\U1D5D9",
+  "\U1D5DA", "\U1D5DB", "\U1D5DC", "\U1D5DD", "\U1D5DE", "\U1D5DF",
+  "\U1D5E0", "\U1D5E1", "\U1D5E2", "\U1D5E3", "\U1D5E4", "\U1D5E5",
+  "\U1D5E6", "\U1D5E7", "\U1D5E8", "\U1D5E9", "\U1D5EA", "\U1D5EB",
+  "\U1D5EC", "\U1D5ED"
+)
+
+names(alphabet_reg) <- letters[1:26]  # <1>
+names(alphabet_bold) <- letters[1:26]  # <1>
+```
+
+1.  Name vectors with regular letters, to access similar to a python dictionary.
+
+First, convert the whole word to the regular letters:
+
+```{r}
+#| label: function-to-unicode-caps
+
+to_unicode_caps <- function(word, alphabet_reg) {  # <1>
+  letters <- str_split(word, pattern = "")  # <2>
+  converted <- ""  # <3>
+  for (l in letters) {  # <4>
+    new_word <- str_c(converted, alphabet_reg[l])  # <4>
+  }  # <4>
+  return(str_flatten(new_word))  # <5>
+}
+```
+
+1.  Function takes `word` as a string and `alphabet_reg` as a named list.
+2.  Split the word into individual letters.
+3.  Start string for the converted word.
+4.  For each letter, use the fact that `alphabet_reg` is named with the regular letters to get the unicode string for the current letter. Concatenate the letter pulled from `alphabet_reg` to the `converted` string.
+5.  Combine list of letters back into one string.
+
+```{r}
+#| label: words-to-unicode
+
+words_unicode <- map(formants$Word, to_unicode_caps, alphabet_reg)  # <1>
+
+formants %<>% mutate(.after = Word, Word_Label = words_unicode) %>%  # <2>
+  unnest(Word_Label)  # <3>
+```
+
+1.  For each item in the `Word` column of the `formants` dataframe, call the function `to_unicode_caps()` (defined in previous code chunk) on it. Pass `alphabet_reg` as the second argument to `to_unicode_caps()`.
+2.  Insert the `words_unicode` into the `formants` dataframe as a column called `Word_Label`, after the `Word` column.
+3.  Convert the items in `Word_Label` from lists containing 1 string to just strings.
+
+Which renders as:
+
+> `r unique(formants$Word_Label)`
+
+Then convert the corresponding vowels to bold face.
+
+```{r}
+#| label: bold-vowels
+
+formants %<>% mutate(  # <1>
+  Word_Label = ifelse(  # <2>
+    Word %in% c(  # <3>
+      "ball", "bang", "bath", "beat", "father", "famous", "goat", "hand",  # <3>
+      "laugh", "near", "palm", "says", "square", "start", "trap"  # <3>
+    ),  # <3>
+    str_replace(Word_Label, alphabet_reg["a"], alphabet_bold["a"]),  # <4>
+    Word_Label  # <5>
+  ),
+  Word_Label = ifelse(  # <6>
+    Word %in% c(  # <6>
+      "beat", "bet", "blue", "dress", "fleece", "guest", "near", "people"  # <6>
+    ),  # <6>
+    str_replace(Word_Label, alphabet_reg["e"], alphabet_bold["e"]),  # <6>
+    Word_Label  # <6>
+  ),  # <6>
+  Word_Label = ifelse(  # <7>
+    Word %in% c("bit", "finish", "kit", "pin"),  # <7>
+    str_replace(Word_Label, alphabet_reg["i"], alphabet_bold["i"]),  # <7>
+    Word_Label  # <7>
+  ),  # <7>
+  Word_Label = ifelse(  # <8>
+    Word %in% c(  # <8>
+      "among", "another", "bought", "cloth", "core", "could", # <8>
+      "force", "goat", "honorific", "lot", "people", "thought",  # <8>
+      "through", "who", "wrong"  # <8>
+    ),  # <8>
+    str_replace(Word_Label, alphabet_reg["o"], alphabet_bold["o"]),  # <8>
+    Word_Label  # <8>
+  ),  # <8>
+  Word_Label = ifelse(  # <9>
+    Word %in% c(  # <9>
+      "bought", "blue", "but", "could", "fun", "guest", "laugh",  # <9>
+      "put", "strut", "square", "support", "thought", "through"  # <9>
+    ),  # <9>
+    str_replace(Word_Label, alphabet_reg["u"], alphabet_bold["u"]),  # <9>
+    Word_Label  # <9>
+  ),  # <9>
+  Word_Label = ifelse(  # <10>
+    Word == "believe",  # <10>
+    str_replace(  # <10>
+      Word_Label,  # <10>
+      str_c(alphabet_reg["i"], alphabet_reg["e"]),  # <10>
+      str_c(alphabet_bold["i"], alphabet_bold["e"])  # <10>
+    ),  # <10>
+    Word_Label  # <10>
+  ),
+  Word_Label = ifelse(  # <11>
+    Word %in% c("goose", "foot"),  # <11>
+    str_replace_all(
+      Word_Label,
+      str_c(alphabet_reg["o"], alphabet_reg["o"]),
+      str_c(alphabet_bold["o"], alphabet_bold["o"])
+    ),  # <11>
+    Word_Label  # <11>
+  ),
+  Word_Label = ifelse(  # <12>
+    Word == "fleece",  # <12>
+    str_replace(Word_Label, alphabet_reg["e"], alphabet_bold["e"]),  # <12>
+    Word_Label  # <12>
+  )
+)
+formants$Word_Label %<>% as.factor()  # <13>
+```
+
+1.  Mutating the `Word_Label` column multiple times, because several words have multiple vowels to swap. Swapping one vowel at a time is shorter than swapping one category of word at time.
+2.  First modification to `Word_Label` is all the words where "A" gets bolded.
+3.  If the value in the `Word` column is one of these items
+4.  Then pass the value of the `Word_Label` column to `str_replace()`. Replace the "a" from the regular-face set with the "a" from the bold-face set.
+5.  If the value in the `Word` column is not any of those words, keep the value of `Word_Label` the same.
+6.  Same logic for all the words where "E" gets bolded.
+7.  Same logic for all the words where "I" gets bolded.
+8.  Same logic for all the words where "O" gets bolded.
+9.  Same logic for all the words where "U" gets bolded.
+10. There are a couple of exceptions: "believe", because that's the word where the second instance of the vowel gets bolded, not the first one. Replace the consecutive "I" and "E" from the regular-face set with the "I" and "E" from the bold-face set.
+11. "Goose" is the only word where both O's need to be bolded.
+12. "Fleece" needs the first two, but not the third E bolded.
+13. Convert `Word_Label` from character to factor.
+
+Which renders as:
+
+> `r levels(formants$Word_Label)`
+
+Now we can see which vowels are being plotted more clearly (but with a reminder of how messy English orthography is):
+
+```{r}
+#| label: fig-by-word-ep-2
+#| fig-cap: "Mean for each word in the Lingthusiasm Episode word list."
+#| fig-asp: 1.25
+#| warning: false
+
+words_ep_2 <- formants %>%
+  filter(List == "Lingthusiasm Episodes") %>%
+  group_by(Speaker, Vowel, Word_Label) %>%  # <1>
+  summarise(F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1, color = Vowel, label = Word_Label)) +  # <2>
+  geom_point(size = 1.25) +
+  geom_label_repel(min.segment.length = 0, force = 75, seed = 2024, size = 4) +
+  facet_wrap(~Speaker, ncol = 1) +
+  scale_color_manual(values = carto_pal(12, "Bold")) +
+  scale_x_reverse(breaks = c(750, 1250, 1750, 2250, 2750)) +
+  scale_y_reverse(breaks = c(250, 500, 750, 1000)) +
+  theme_classic() +
+  lingthusiasm_theme +
+  theme(plot.subtitle = element_markdown(size = 15, family = "sans")) +
+  labs(title = "Means By Word: Lingthusiasm Episodes", subtitle = vowel_key) +
+  guides(color = guide_none())
+
+words_ep_2
+```
+
+1.  Replace `Word` with `Word_Label`.
+2.  Replace `Word` with `Word_Label` here too.
+
+This was one of the points where I (from the northeast US) realized how I don't have a lot of experience with Australian accents, because I wasn't entirely sure how much of the messiness in Lauren's back vowel data was because her back vowels are in different locations, or because I picked words where she uses a different vowel than Gretchen and I do.
+
 
 Save the plots: 
 
@@ -393,6 +667,14 @@ ggsave(
 ggsave(
   points, path = "plots", filename = "3_individual_points.png",
   width = 8, height = 5, unit = "in", device = png
+)
+ggsave(
+  words_ls, path = "plots", filename = "4_words_lexical_set.png",
+  width = 8, height = 5, unit = "in", device = png
+)
+ggsave(
+  words_ep_2, path = "plots", filename = "4_words_episodes.png",
+  width = 8, height = 8, unit = "in", device = png
 )
 ```
 
