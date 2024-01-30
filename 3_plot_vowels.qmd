@@ -222,3 +222,118 @@ tibble(
 9.  Remove the axis lines, labels, titles, and ticks.
 10. Use the `patchwork` package to add the logo image on top of the plot. This step needs to be last.
 11. Specify the positions for each corner of the logo, using `spnc` units so it stays square even if the overall plot is rectangular.
+
+### Plot Vowel Means
+
+Now let's take a look at the data! F1 gets plotted on the Y axis, and F2 gets plotted on the X axis.
+
+```{r}
+#| label: fig-vowel-means-1
+#| fig-cap: "Vowel means (default axes)."
+
+means_1 <- formants %>%  # <1>
+  group_by(Speaker, List, Vowel) %>%  # <1>
+  summarise(F1 = mean(F1), F2 = mean(F2)) %>% # <1>
+  ggplot(aes(x = F2, y = F1, label = Vowel)) +  # <2>
+  geom_textbox(  # <3>
+    fill = lingthusiasm_green, box.colour = NA,  # <4>
+    color = "white", size = 4.5, halign = 0.5, valign = 0.5, # <5>
+    width = unit(0.10, "snpc"), height = unit(0.10, "snpc"),  # <6>
+    box.padding = unit(c(0, 0, 0, 0), "snpc"), box.r = unit(0.01, "snpc")  # <7>
+  ) +  
+  facet_grid(Speaker ~ List) +  # <8>
+  theme_classic() +  # <9>
+  theme(
+    axis.line = element_line(color = lingthusiasm_navy),  # <10>
+    axis.ticks = element_line(color = lingthusiasm_navy),  # <10>
+    panel.border = element_rect(color = lingthusiasm_navy, fill = NA),  # <10>
+    strip.background = element_rect(color = lingthusiasm_navy),  # <10>
+    text = element_text(size = 12, family = "sans_alt", color = lingthusiasm_navy),  # <11>
+    axis.text = element_text(color = lingthusiasm_navy),  # <11>
+    strip.text = element_text(color = lingthusiasm_navy, size = 12)  # <11>
+  ) +
+  labs(title = "Vowel Means")  # <12>
+
+means_1
+```
+
+1.  Take the full data set, group it by `Speaker` then `List` then `Vowel`, and then calculate the means of `F1` and `F2` for each `Speaker` x `List` x `Vowel`.
+2.  All layers of the plot have `F2` on the X axis, `F1` on the Y axis, and are labelled by `Vowel`.
+3.  Write the vowel symbols (because `Label = Vowel`) at the location of their means.
+4.  Make the text box background lingthusiasm green with no outline.
+5.  Make the text white, size 4.5 (note that this is on a different scale than the rest of the text sizes specified in later `theme()`), vertically and horizontally centered.
+6.  Set the size of the text boxes, using `snpc` (squared normalized parent coordinates) to be relative to the size of the plot but always square.
+7.  No margins inside the text boxes and a slight curve on the corners.
+8.  Split the plot to have Gretchen's data in the top panels and Lauren's data in the bottom panels, and the data from the Lingthusiasm episodes in the left panels and the data from the Wells lexical set recordings in the right panels.
+9.  Change the default theme to have a white background with no grid lines.
+10. Change all the lines (axis lines, axis ticks, outline around panels, outline around panel labels) to be the lingthusiasm navy.
+11. Make all the text navy Josefin Sans. Set the base size as 12, but make the text of the speaker panel labels bigger.
+12.  Set the title, and leave the other axis/legend labels as their default values of "F1", "F2", and "Vowel."
+
+(Sidenote: saving the theme specifications so we don't have to keep retyping theme.)
+
+```{r}
+#| label: lingthusiasm-plot-theme
+
+lingthusiasm_theme <- theme(
+  axis.line = element_line(color = lingthusiasm_navy),
+  axis.ticks = element_line(color = lingthusiasm_navy),
+  panel.border = element_rect(color = lingthusiasm_navy, fill = NA),
+  strip.background = element_rect(color = lingthusiasm_navy),
+  text = element_text(size = 12, family = "sans_alt", color = lingthusiasm_navy),
+  axis.text = element_text(color = lingthusiasm_navy),
+  strip.text = element_text(color = lingthusiasm_navy, size = 12)
+) 
+```
+
+However, vowel plots typically have their axes reversed, so that the highest value of (F1, F2) is at the bottom left corner instead of the top right corner. This isn't standard data visualization procedure, but it has a cool and useful result.
+
+```{r}
+#| label: fig-vowel-means-2
+#| fig-cap: "Vowel means (reversed axes)."
+
+means_2 <- formants %>%  # <1>
+  group_by(List, Speaker, Vowel) %>%
+  summarise(F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1, label = Vowel)) +
+  geom_textbox(
+    fill = lingthusiasm_green, box.colour = NA,
+    color = "white", size = 4.5, halign = 0.5, valign = 0.5,
+    width = unit(0.10, "snpc"), height = unit(0.10, "snpc"),
+    box.padding = unit(c(0, 0, 0, 0), "snpc"), box.r = unit(0.01, "snpc")
+  ) +  
+  facet_grid(Speaker ~ List) +
+  scale_x_reverse(breaks = c(1000, 1500, 2000, 2500)) +  # <2>
+  scale_y_reverse(limits = c(1050, 225), n.breaks = 4) +  # <3>
+  theme_classic() +
+  lingthusiasm_theme +  # <4>
+  labs(title = "Vowel Means")
+
+means_2
+```
+
+1.  Just annotating the lines that changed from the previous chunk.
+2.  Add this to flip the X axis. Specify `breaks` because the default values aren't even.
+3.  Add this to flip the Y axis. The limits (see how they're reversed) are specified because the defaults were a bit too narrow, and like this the axis ticks/labels are spaced more evenly.
+4.  Add this to specify the colors and font sizes etc.
+
+Now the layout resembles the IPA vowel chart! Front vowels are on the left, and back vowels are on the right; close vowels are on the top, and open vowels are on the bottom.
+
+[![IPA Vowel Chart.](resources/ipa_chart.png){#fig-ipa}](https://commons.wikimedia.org/wiki/File:Ipa-chart-vowels.png)
+
+
+Save the plots: 
+```{r}
+#| label: export-plots
+
+ggsave(
+  means_1, path = "plots", filename = "1_means_original.png",
+  width = 8, height = 5, unit = "in", device = png  # <1>
+)
+ggsave(
+  means_2, path = "plots", filename = "2_means_flipped.png",
+  width = 8, height = 5, unit = "in", device = png
+)
+```
+
+1.  Need to specify `device = png` (not leave default or `device = "png"`) to get Josefin Sans font to render correctly.
