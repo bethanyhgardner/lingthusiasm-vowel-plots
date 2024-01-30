@@ -321,8 +321,64 @@ Now the layout resembles the IPA vowel chart! Front vowels are on the left, and 
 
 [![IPA Vowel Chart.](resources/ipa_chart.png){#fig-ipa}](https://commons.wikimedia.org/wiki/File:Ipa-chart-vowels.png)
 
+### Plot Individual Data Points
+
+Just plotting the means for each vowel loses a lot of information, so let's take a look at the underlying data.
+
+Now, we'll distinguish between vowels by color. First, make a legend that will be easier to read than the default by creating a string that prints each vowel in its corresponding color (using the [ggtext package](https://wilkelab.org/ggtext/) to render the HTML formatting).
+
+```{r}
+#| label: vowel-key
+
+vowel_key <- tibble("Vowel" = vowels, "Color" = carto_pal(12, "Bold")[1:11]) %>%  # <1>
+  mutate(Styled = str_c("<b style='color:", Color, "'>", Vowel, "</b>")) %>%  # <2>
+  pull(Styled) %>%  # <3>
+  str_flatten(collapse = ", ")  # <3>
+
+vowel_key %>% str_wrap(32) %>% str_view()  # <4>
+```
+
+1.  `Vowel` column is the list of vowels (unicode codes). `Color` column is the hex codes from the `Bold` palette in `rcartocolor`, the color set we've been using so far. (Using the first 11 values from the full palette, so the last color isn't gray.)
+2.  Encase with HTML code, so that hex code becomes a `color` argument for the vowel character.
+3.  Merge into 1 string, with each value separated by a comma + space. 4.. Print, wrapping lines on each item.
+
+Which will render like this:
+
+> `r vowel_key`
+
+(Note that ggplot will throw a warning like `Warning in text_info(label, fontkey, fontfamily, font, fontsize, cache): unable to translate '<U+0251>png215' to native encoding`, but it renders correctly, so the warnings are turned off in those code chunks.)
+
+```{r}
+#| label: fig-by-point
+#| fig-cap: "Individual data points."
+
+points <- formants %>%  # <1>
+  ggplot(aes(x = F2, y = F1, color = Vowel, label = Vowel)) +
+  geom_point(size = 1.5) +  # <2>
+  facet_grid(Speaker ~ List) +
+  scale_color_manual(values = carto_pal(12, "Bold")) +  # <3>
+  scale_x_reverse(breaks = c(750, 1250, 1750, 2250, 2750)) +  # <4>
+  scale_y_reverse(breaks = c(250, 500, 750, 1000)) +  # <4>
+  theme_classic() +
+  lingthusiasm_theme +
+  theme(plot.subtitle = element_markdown(family = "sans")) +  # <5>
+  labs(title = "Individual Data Points", subtitle = vowel_key) +  # <6>
+  guides(color = guide_none())  # <7>
+
+points
+```
+
+1.  Passing the full data set, not the means by `Speaker` + `Vowel` + `List`, to ggplot.
+2.  Instead of `geom_text()`, `geom_point()` is a layer drawing scatterplot (`size` making the points slightly bigger than default).
+3.  Use the `Bold` color palette from the `rcartocolor` package to color-code the vowels. (There are 11 vowels, but I specify 12 colors here so the grey gets skipped.)
+4.  Limits need to be slightly bigger than plots with vowel means, and then breaks adjusted so that that Y axis labels don't overlap with each other between the two panels.
+5.  `element_markdown()` from `ggtext` will render the HTML string. Use default sans serif font because Josefin Sans doesn't have all of the IPA symbols.
+6.  Add the color-coded list of vowels as a subtitle.
+7.  Turn the default legend off.
+
 
 Save the plots: 
+
 ```{r}
 #| label: export-plots
 
@@ -332,6 +388,10 @@ ggsave(
 )
 ggsave(
   means_2, path = "plots", filename = "2_means_flipped.png",
+  width = 8, height = 5, unit = "in", device = png
+)
+ggsave(
+  points, path = "plots", filename = "3_individual_points.png",
   width = 8, height = 5, unit = "in", device = png
 )
 ```
