@@ -734,3 +734,144 @@ ggsave(
 ```
 
 1.  Need to specify `device = png` (not leave default or `device = "png"`) to get Josefin Sans font to render correctly.
+
+### Stylized Versions {#results}
+
+The plots so far would work for a scientific presentation/paper, but the original goal was to make plots that are a little more artistic. Now that we understand what vowel data is going into the plots and how the vowel plots correspond to the IPA vowel chart, we can play around with removing some of the axis and label information for a more minimalist look. Starting at this step, without making the complete plot first, is possible, but it would be easy to end up with errors.
+
+Basically, if you want to remove axes for scientific presentations: don't. If you want to remove axes for artistic license: make sure you understand what you're removing first.
+
+#### Word Means for Wells Lexical Set
+
+The first pair of stylized plots just includes the Wells Lexical Set data.
+
+`ggrepel::geom_label_repel()`, which draws the label boxes offset from the points, doesn't currently support having the label text a different color than the box outline, so the trick with this one is to call it twice---once to draw everything in navy, and a second time to draw just the text in green on top of the navy text.
+
+Here's Gretchen's version:
+
+```{r}
+#| label: gretchen-ls
+
+gretchen_words_ls <- formants %>%  # <1>
+  filter(Speaker == "Gretchen" & List == "Wells Lexical Set") %>%  # <1>
+  summarise(.by = Word, F1 = mean(F1), F2 = mean(F2)) %>%  # <2>
+  ggplot(aes(x = F2, y = F1, label = Word)) +  # <3>
+  geom_point(color = lingthusiasm_navy, size = 2) +  # <4>
+  geom_label_repel(  # <5>
+    color = lingthusiasm_navy,  # <6>
+    family = "sans_alt", size = 5,  # <7>
+    min.segment.length = 0, segment.size = 0.75, label.size = 1,  # <8>
+    label.padding = unit(0.4, "lines"), label.r = unit(0.4, "lines"),  # <9>
+    force = 65, seed = 84  # <10>
+  ) +
+  geom_label_repel(  # <11>
+    color = lingthusiasm_green,  # <12>
+    family = "sans_alt", size = 5,  # <13>
+    min.segment.length = 0, segment.size = NA, label.size = NA,  # <14>
+    label.padding = unit(0.4, "lines"), label.r = unit(0.4, "lines"),  # <15>
+    force = 65, seed = 84  # <15>
+  ) +
+  scale_x_reverse(limits = c(3100, 500), expand = c(0, 0)) +  # <16>
+  scale_y_reverse(limits = c(1200, 325), expand = c(0, 0)) +  # <16>
+  theme_classic() +
+  theme(  # <17>
+    axis.line = element_blank(), axis.text = element_blank(),  # <17>
+    axis.ticks = element_blank(), axis.title = element_blank()  # <17>
+  ) +  # <17>
+  annotate(  # <18>
+    geom = "text", label = "Gretchen",  # <18>
+    family = "sans_alt", size = 11, color = lingthusiasm_green,  # <19>
+    x = 2525, y = 1070  # <20>
+  ) +
+  inset_element(  # <21>
+    p = lingthusiasm_logo,  # <21>
+    left = unit(0.05, "snpc"), right = unit(0.15, "snpc"),  # <22>
+    top = unit(0.2, "snpc"), bottom = unit(0.1, "snpc")  # <22>
+  )
+
+ggsave(  # <23>
+  gretchen_words_ls, path = "plots", filename = "gretchen_words_ls.png",  # <23>
+  width = 8, height = 5, unit = "in", device = png  # <23>
+)  # <23>
+```
+
+1.  Just include Gretchen's data from the Wells Lexical Set list.
+2.  Calculate the mean of `F1` and `F2` for each word.
+3.  Like the rest of the plots, `F1` goes on the Y axis, `F2` goes on the X axis, and `Word` is the label.
+4.  Draw a point at each word mean, and make it the Lingthusiasm navy and slightly larger than the default.
+5.  First layer of `geom_text_repel()` to get the navy lines.
+6.  Make the text color and the outline around the box navy.
+7.  Josefin Sans font and larger text size.
+8.  Always draw a line between the label and the point, and make the line a bit thicker than default.
+9.  Increase the padding around the text and the amount of curve on the corners.
+10. Increase the amount the labels are repelled from the points (play around with different values until it looks good), and set a seed so the output is consistent.
+11. Second layer of `geom_text_repel()` to get the green text.
+12. Make the text color (and also the outline for now) the Lingthusiasm green.
+13. Josefin Sans font and larger text size. Needs to be the same as the previous layer so there's no navy text visible below the green text.
+14. Set `segment.size` and `label.size` to 0 so that this layer doesn't draw a green box outline or line connecting to the point.
+15. Same box padding and shape, repel value, and seed so that the labels are in the same place.
+16. Reverse the axes, and set the limits to look right before removing the labels in the next step.
+17. Remove the axis lines, ticks, numbers, and title.
+18. Add a layer writing "Gretchen."
+19. Set the font to Josefin Sans, the color to Lingthusiasm green, and the size to be about double the size of the word labels.
+20. The location is on the scale of the axes.
+21. Use `patchwork` to add a layer for the Lingthusiasm logo. This layer needs to be last, and the image needs to be loaded as a raster (see Lingthusiasm Theme section at the beginning).
+22. Locations for the logo. (0, 0) is the bottom left corner of the plot, and (1, 1) is the top right corner. The distance between the top/bottom and left/right are even, and the units are `snpc` (squared normalized parent coordinates), so the logo is square and 10% of the height of the plot.
+23.  Save the plot. The text/line sizes and locations of the annotation layers are set to look right at this size and aspect ratio. Instead of rendering the plot in this chunk like before, the saved image is inserted directly below, to keep the sizing exact.
+
+![Gretchen: Means for each word in the Wells Lexical Set data.](plots/gretchen_words_ls.png){#fig-gretchen-ls}
+
+And here's Lauren's data:
+
+```{r}
+#| label: lauren-ls
+
+lauren_words_ls <- formants %>%
+  filter(Speaker == "Lauren" & List == "Wells Lexical Set") %>%  # <1>
+  summarise(.by = Word, F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1, label = Word)) +
+  geom_point(color = lingthusiasm_navy, size = 2) +
+  geom_label_repel(
+    color = lingthusiasm_navy,
+    family = "sans_alt", size = 5,
+    min.segment.length = 0, segment.size = 0.75, label.size = 1,
+    label.padding = unit(0.4, "lines"), label.r = unit(0.4, "lines"),
+    force = 65, seed = 84
+  ) +
+  geom_label_repel(
+    color = lingthusiasm_green,
+    family = "sans_alt", size = 5,
+    min.segment.length = 0, segment.size = NA, label.size = NA,
+    label.padding = unit(0.4, "lines"), label.r = unit(0.4, "lines"),
+    force = 65, seed = 84
+  ) +
+  scale_x_reverse(limits = c(3000, 500), expand = c(0, 0)) +  # <2>
+  scale_y_reverse(limits = c(1000, 325), expand = c(0, 0)) +  # <2>
+  theme_classic() +
+  theme(
+    axis.line = element_blank(), axis.text = element_blank(),
+    axis.ticks = element_blank(), axis.title = element_blank()
+  ) +
+  annotate(
+    geom = "text", label = "Lauren",
+    family = "sans_alt", size = 11, color = lingthusiasm_green,
+    x = 2500, y = 865,  # <3>
+  ) +
+  inset_element(
+    p = lingthusiasm_logo,
+    left = unit(0.05, "snpc"), right = unit(0.15, "snpc"),  # <4>
+    top = unit(0.25, "snpc"), bottom = unit(0.15, "snpc")  # <4>
+  )
+
+ggsave(
+  lauren_words_ls, path = "plots", filename = "lauren_words_ls.png",
+  width = 8, height = 5, unit = "in", device = png
+)
+```
+
+1. Change to include Lauren's data instead of Gretchen's.
+2. To get a plot where the edge around the data are even, the limits for Lauren's data are slightly different than the limits for Gretchen's.
+3. The location of the name layer also needs to be slightly different for Lauren.
+4. And finally so does the location of the logo (but the size/aspect ratio stay the same).
+
+![Lauren: Means for each word in the Wells Lexical Set data.](plots/lauren_words_ls.png){#fig-lauren-ls}
