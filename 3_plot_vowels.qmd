@@ -875,3 +875,213 @@ ggsave(
 4. And finally so does the location of the logo (but the size/aspect ratio stay the same).
 
 ![Lauren: Means for each word in the Wells Lexical Set data.](plots/lauren_words_ls.png){#fig-lauren-ls}
+
+#### Vowel Means for Lingthusiasm Episode Words {.unnumbered}
+
+The second pair of stylized plots uses the data from the Lingthusiasm episodes.
+
+I want to draw a trapezoid around vowel space, with the axes the same for Gretchen and Lauren's data so you can compare them. `geom_path()` connects a series of points, so we need the four corners, plus the starting corner again. Here's a visualization of the trapezoid coordinates, relative to the vowel means:
+
+```{r}
+#| label: polygon
+
+vowel_polygon <- tibble(
+  x = c(800, 800, 3000, 2000, 800),
+  y = c(1000, 275, 275, 1000, 1000)
+)
+
+formants %>%
+  summarise(.by = c(Vowel, Speaker), F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_path(data = vowel_polygon, aes(x = x, y = y)) +
+  geom_point() +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  theme_classic() +
+  annotate(
+    geom = "label", label = "1/5",
+    x = as.numeric(vowel_polygon[1, "x"]), y = as.numeric(vowel_polygon[1, "y"])
+  ) +
+  annotate(
+    geom = "label", label = "2",
+    x = as.numeric(vowel_polygon[2, "x"]), y = as.numeric(vowel_polygon[2, "y"])
+  ) +
+  annotate(
+    geom = "label", label = "3",
+    x = as.numeric(vowel_polygon[3, "x"]), y = as.numeric(vowel_polygon[3, "y"])
+  ) +
+  annotate(
+    geom = "label", label = "4",
+    x = as.numeric(vowel_polygon[4, "x"]), y = as.numeric(vowel_polygon[4, "y"])
+  )
+```
+
+Now that we have the layout of the trapezoid, plot Gretchen's data. `geom_textbox()` and `geom_label_repel()` can only draw squares/rectangles, so to get circles like the Lingthusiasm logo, I use `geom_mark_circle()` to draw a circle, then `geom_text()` to write the vowel on top of it.
+
+```{r}
+#| label: gretchen-ep
+
+gretchen_vowels_ep <- formants %>%  # <1>
+  filter(Speaker == "Gretchen" & List == "Lingthusiasm Episodes") %>%  # <1>
+  summarise(.by = Vowel, F1 = mean(F1), F2 = mean(F2)) %>%  # <1>
+  ggplot() +  # <2>
+  geom_path(  # <3>
+    data = vowel_polygon,  # <3>
+    aes(x = x, y = y),  # <3>
+    color = lingthusiasm_navy, linewidth = 2, lineend = "round"  # <4>
+  ) +
+  geom_mark_circle(  # <5>
+    aes(x = F2, y = F1, group = Vowel),  # <5>
+    radius = unit(0.048, "snpc"), n = 1000,  # <6>
+    fill = lingthusiasm_green, alpha = 1, color = NA  # <7>
+  ) +
+  geom_text(  # <8>
+    aes(x = F2, y = F1, label = Vowel),  # <8>
+    color = "white", size = 11, nudge_y = 4  # <9>
+  ) +
+  scale_x_reverse(
+    limits = c(max(vowel_polygon$x), min(vowel_polygon$x)),  # <10>
+    expand = c(0.01, 0.01)  # <10>
+  ) +
+  scale_y_reverse(
+    limits = c(max(vowel_polygon$y), min(vowel_polygon$y)),  # <10>
+    expand = c(0.01, 0.01),  # <10>
+    position = "right"  # <11>
+  ) +
+  theme_classic() +
+  theme(
+    axis.line = element_blank(),  # <12>
+    axis.text = element_blank(),  # <12>
+    axis.ticks = element_blank(),  # <12>
+    axis.title.x = element_blank(),  # <12>
+    axis.title.y = element_text(  # <13>
+      size = 30, hjust = 1,  # <13>
+      color = lingthusiasm_navy, family = "sans_alt"  # <13>
+    )  # <13>
+  ) +
+  labs(y = "Gretchen")  # <14>
+
+ggsave(
+  gretchen_vowels_ep, path = "plots", filename = "gretchen_vowels_ep.png",
+  width = 7.25, height = 5, unit = "in", device = png
+)
+```
+
+1.  Just include Gretchen's data from the Lingthusiasm episode word list, and calculate the mean `F1` and `F2` for each `Vowel.`
+2.  Instantiate the plot, but set the values for `aes()` separately in each geom below.
+3.  Draw the trapezoid, using the data from `vowel_polygon` not the vowel means passed into the plot. This draws a line connecting each of the coordinates listed in the `x` and `y` columns.
+4.  Make the line navy, thicker than default, and rounded at the corners.
+5.  Draw a circle around each vowel mean. Specify `group = Vowel` not `label = Vowel`, so that there is a circle for each vowel, but no labels.
+6.  Make the radius of the circle 4.8% of the plot's height (again using squared normalized parent coordinates, just small enough to not overlap), and increase the number of points used to draw the circle from 100 so it looks smoother.
+7.  Fill the circle with Lingthusiasm green, make it not transparent (the default alpha is 0.3 not 1), and remove the black outline.
+8.  Draw the vowel label at each mean.
+9.  Make the text white, large enough to just fit inside the circle, and nudge it up just a bit (because most of the IPA symbols are sized as lowercase).
+10. Set the axis limits to be 1% larger than the borders of the trapezoid.
+11. Move the title of the Y axis from the left to the right.
+12. Remove the lines, text, and ticks from the X and Y axes and the title from the X axis.
+13. Make the Y axis title size 30, aligned to the bottom not the middle, navy, and Josefin Sans.
+14. Set the Y axis title to be `Gretchen` instead of `F1`.
+
+![Gretchen: Means for each vowel in the Lingthusiasm episode data.](plots/gretchen_vowels_ep.png){#fig-gretchen-ep}
+
+Do the same thing for Lauren's data:
+
+```{r}
+#| label: lauren-ep
+
+lauren_vowels_ep <- formants %>%
+  filter(Speaker == "Lauren" & List == "Lingthusiasm Episodes") %>%  # <1>
+  summarise(.by = Vowel, F1 = mean(F1), F2 = mean(F2)) %>%
+  ggplot(aes(x = F2, y = F1, group = Vowel)) +
+  geom_path(
+    data = vowel_polygon,
+    aes(x = x, y = y, group = NA),
+    color = lingthusiasm_navy, linewidth = 2, lineend = "round"
+  ) +
+  geom_mark_circle(
+    radius = unit(0.048, "snpc"), n = 1000,
+    fill = lingthusiasm_green, alpha = 1, color = NA
+  ) +
+  geom_text(aes(label = Vowel), color = "white", size = 11, nudge_y = 4) +
+  scale_x_reverse(
+    limits = c(max(vowel_polygon$x), min(vowel_polygon$x)),
+    expand = c(0.01, 0.01)
+  ) +
+  scale_y_reverse(
+    limits = c(max(vowel_polygon$y), min(vowel_polygon$y)),
+    expand = c(0.01, 0.01),
+    position = "right"
+  ) +
+  theme_classic() +
+  theme(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(
+      size = 30, hjust = 1,
+      color = lingthusiasm_navy, family = "sans_alt"
+    )
+  ) +
+  labs(y = "Lauren")  # <2>
+
+ggsave(
+  lauren_vowels_ep, path = "plots", filename = "lauren_vowels_ep.png",
+  width = 7.25, height = 5, unit = "in", device = png
+)
+```
+
+1. Only things that need to change from Gretchen's version are the filter on the data.
+2. And the axis label.
+
+![Lauren: Means for each vowel in the Lingthusiasm episode data.](plots/lauren_vowels_ep.png){#fig-lauren-ep}
+
+To combine the two, I'm going to flip Gretchen's horizontally, so it looks like two speakers facing each other.
+
+```{r}
+#| label: paired-ep
+#| warning: false
+
+paired_vowels_ep <- gretchen_vowels_ep +  # <1>
+  scale_x_continuous(  # <2>
+    limits = c(min(vowel_polygon$x), max(vowel_polygon$x)),  # <2>
+    expand = c(0.01, 0.01)
+  ) +
+  scale_y_reverse(
+    limits = c(max(vowel_polygon$y), min(vowel_polygon$y)),
+    expand = c(0.01, 0.01),
+    position = "left"  # <3>
+  ) +
+  theme(
+    axis.title.y = element_text(hjust = 0),  # <4>
+    plot.margin = margin(t = 10, l = 10, r = 30, b = 10)  # <5>
+  ) +
+  lauren_vowels_ep +  # <6>
+  theme(plot.margin = margin(t = 10, l = 30, r = 10, b = 10)) +  # <7>
+  lingthusiasm_tagline +  # <8>
+  plot_layout(design = c(  # <9>
+    area(t = 1, l = 1, b = 5, r = 4),  # <10>
+    area(t = 1, l = 5, b = 5, r = 8),  # <11>
+    area(t = 4, l = 4, b = 5, r = 5)   # <12>
+  ))
+
+ggsave(
+  paired_vowels_ep, path = "plots", filename = "paired_vowels_ep.png",
+  width = 15, height = 5, unit = "in", device = png
+)
+```
+
+1.  Use the `patchwork` package to combine plots. Start with Gretchen's plot on the left.
+2.  Replace the `x` axis scale with the non-reversed version `scale_x_continuous`, flip the limits accordingly, and keep the expansion the same.
+3.  Keep the `y` axis scale reversed, but put the axis title back on the left.
+4.  Shift the Y axis title ("Gretchen") to be aligned to the bottom.
+5.  Add some space to the right side of the plot.
+6.  Add Lauren's plot.
+7.  Add space to the left side of the plot. Based on how `patchwork` works, this only applies to Lauren's plot added last, not Gretchen's.
+8.  Add the Lingthusiasm tagline image.
+9.  Specify the locations of the three pieces on a grid to have Gretchen's plot on the left, Lauren's on the right, and the Lingthusiasm logo on the bottom.
+10. Gretchen's plot: full height, left side.
+11. Lauren's plot: full height, right side.
+12  Lingthusiasm tagline logo: 20% of height, overlapping each of the other plots by 25%.
+
+![Gretchen (left) & Lauren (right): Means for each vowel in the Lingthusiasm episode data.](plots/paired_vowels_ep.png){#fig-paired-ep}
