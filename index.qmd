@@ -1,3 +1,21 @@
 ---
 title: "Lingthusiasm Vowel Plots"
+page-layout: article
 ---
+
+This is the tutorial website for the Lingthusiasm bonus episode about making vowel plots. I took data from the Lingthusiasm episode recordings and from a recording of the Wells Lexical Set that Gretchen and Lauren made for me:
+
+![](plots/3_individual_points.png)
+
+And made stylized versions of the Wells Lexical Set:
+
+![](plots/gretchen_words_ls.png)
+![](plots/lauren_words_ls.png)
+
+And of the Lingthusiasm episode data:
+
+![](plots/paired_vowels_ep.png)
+
+[Part 1](1_find_words.qmd) of the tutorial finds the vowel data to use, [Part 2](2_annotate_audio.qmd) annotates F1 and F2 in the vowel data, and [Part 3](3_plot_vowels.qmd) explains how vowel plots work and makes several versions.
+
+If you use this tutorial to make your own plots, I'd love to see them! If you have questions about this material, feel to get in touch with me by posting in this GitHub's [discussion page](https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/discussions) or sending me an [email](mailto:bethanyhgardner@gmail.com). To see if I'm currently taking freelance contracts for data visualizations or other related tasks, send me an [email](mailto:bethanyhgardner@gmail.com).
