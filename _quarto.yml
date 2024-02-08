@@ -34,7 +34,7 @@ website:
         - text: "Source Code"
           href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/
         - text: "Ask a Question"
-          href: "https://github.com/bethanyhgardner/lingthusiasm-vowel-plots-workspace/issues"
+          href: "https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/discussion"
   search: false
   page-navigation: true
   repo-actions: source
@@ -61,6 +61,5 @@ theme:
   - zephyr  # main theme is Bootswatch Zephyr
   - resources/theme.css  # change primary color from blue to lingthusiasm green
 toc: true
-toc-depth: 4
 toc-expand: true
 toc-title: "Contents"

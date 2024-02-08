@@ -195,7 +195,7 @@ word_list.style.hide()  # <6>
 
 ### An Interlude in Praat
 
-Now, we have about 400 audio clips of Gretchen and Lauren saying words that are good examples of each vowel. The vowel data that will actually be going into the plots is F1 and F2 [**todo: link to overview of formants**]. The easiest way to calculate the vowel formants is using Praat, a software designed for doing phonetic analysis.
+Now, we have about 400 audio clips of Gretchen and Lauren saying words that are good examples of each vowel. The vowel data that will actually be going into the plots is the lowest two formants: F1 and F2 (see the bonus episode about vowel plots and the main episode about vowels for an explanation of what formants are). The easiest way to calculate the vowel formants is using Praat, a software designed for doing phonetic analysis.
 
 Here's an example of what that looked like:
 

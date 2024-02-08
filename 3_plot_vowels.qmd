@@ -1,11 +1,12 @@
 ---
 title: "Part 3: Plotting the Vowels"
 number-offset: [0, 3, 0]
+toc-depth: 4
 ---
 
 <br>
 
-Now to actually make the vowel plots! This document goes into detail about how I decided to make them the way I did and how to implement them in ggplot, but if you just want to see the final results, jump down to [here](#results).
+Now to actually make the vowel plots! This document goes into detail about how I decided to make them the way I did and how to implement them in ggplot, but if you just want to see the final results, jump down to [here](#fig-gretchen-ls), [here](#fig-lauren-ls), and [here](#fig-paired-ep).
 
 ### Setup
 
@@ -171,8 +172,8 @@ And the logo:
 ```{r}
 #| label: lingthusiasm-logo
 
-lingthusiasm_logo <- readPNG("resources/lingthusiasm_logo_circle.png",  native = TRUE)  # <1>
-lingthusiasm_tagline <- readPNG("resources/lingthusiasm_logo_tagline.png",  native = TRUE)  # <1>
+lingthusiasm_logo <- readPNG("resources/lingthusiasm_logo_circle.png", native = TRUE)  # <1>
+lingthusiasm_tagline <- readPNG("resources/lingthusiasm_logo_tagline.png", native = TRUE)  # <1>
 ```
 
 1.  Read logo images. `native = TRUE` specifies reading it as a raster object instead of an array, which is the format `patchwork::inset_element()` needs.
@@ -701,11 +702,10 @@ Ellipse plots are hard to make work for this data set, since there's just too mu
 
 For more info on ellipse vowel plots and how to tweak their appearance, I like [this tutorial](https://lingmethodshub.github.io/content/R/vowel-plots-tutorial/).
 
-
-Save the plots: 
+Save the plots created so far: 
 
 ```{r}
-#| label: export-plots
+#| label: export-plots-1
 
 ggsave(
   means_1, path = "plots", filename = "1_means_original.png",
@@ -735,13 +735,13 @@ ggsave(
 
 1.  Need to specify `device = png` (not leave default or `device = "png"`) to get Josefin Sans font to render correctly.
 
-### Stylized Versions {#results}
+### Stylized Versions
 
 The plots so far would work for a scientific presentation/paper, but the original goal was to make plots that are a little more artistic. Now that we understand what vowel data is going into the plots and how the vowel plots correspond to the IPA vowel chart, we can play around with removing some of the axis and label information for a more minimalist look. Starting at this step, without making the complete plot first, is possible, but it would be easy to end up with errors.
 
 Basically, if you want to remove axes for scientific presentations: don't. If you want to remove axes for artistic license: make sure you understand what you're removing first.
 
-#### Word Means for Wells Lexical Set
+#### Word Means for Wells Lexical Set {.unnumbered}
 
 The first pair of stylized plots just includes the Wells Lexical Set data.
 
