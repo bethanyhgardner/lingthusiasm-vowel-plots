@@ -27,14 +27,14 @@ website:
         - text: "Coming in March 2024!"
           href: https://lingthusiasm.com/
       - text: "Downloads"
-        href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/image-downloads
+        href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/tree/main/plots
     tools:
       - icon: github
         menu:
         - text: "Source Code"
           href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/
         - text: "Ask a Question"
-          href: "https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/discussion"
+          href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/discussions
   search: false
   page-navigation: true
   repo-actions: source
