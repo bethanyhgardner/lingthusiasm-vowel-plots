@@ -4,7 +4,7 @@
 
 ## About
 
-This repository includes the data, code, and [tutorial website](https://bethanyhgardner.github.io/lingthusiasm-vowel-plots/) accompanying Lingthusiasm's bonus episode about vowel plots (coming in March 2024!).
+This repository includes the data, code, and [tutorial website](https://bethanyhgardner.github.io/lingthusiasm-vowel-plots/) accompanying Lingthusiasm's episodes about vowel plots. You can find the main episode, "What visualizing our vowels tells us about who we are", on [Lingthusiasm's website](https://lingthusiasm.com/post/745605428371701760/lingthusiasm-episode-90-what-visualizing-our) and the bonus episode, "How we made vowel plots with Bethany Gardner" on [Lingthusiasm's patreon](https://www.patreon.com/posts/99832833).
 
 If you use this tutorial to make your own plots, I’d love to see them! If you have questions about this material, feel to get in touch with me by posting on discussion page or sending me an email. To see if I’m currently taking freelance contracts for data visualizations or other related tasks, send me an email (this GitHub username @ gmail.com).
 

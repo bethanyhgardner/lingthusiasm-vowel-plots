@@ -25,8 +25,10 @@ website:
           - 3_plot_vowels.qmd
       - text: "Episode"
         menu:
-        - text: "Coming in March 2024!"
-          href: https://lingthusiasm.com/
+        - text: "Main Episode: What visualizing our vowels tells us about who we are"
+          href: https://lingthusiasm.com/post/745605428371701760/lingthusiasm-episode-90-what-visualizing-our
+        - text: "Patreon Bonus Episode: How we made vowel plots"
+          href: https://www.patreon.com/posts/99832833
       - text: "Downloads"
         href: https://github.com/bethanyhgardner/lingthusiasm-vowel-plots/tree/main/plots
     tools:

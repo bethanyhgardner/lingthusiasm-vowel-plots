@@ -9,3 +9,5 @@ _freeze/
 renv/activate.R
 renv/settings.json
 lingthusiasm.Rproj
+workspace.zip
+docs/site_libs/
